@@ -1,0 +1,250 @@
+---
+title: "Tema I: Análisis exploratorio de series temporales"
+subtitle: "Curso: Análisis de series temporales"
+author: 
+  name: "Shu Wei Chou Chen"
+  affiliation: "Escuela de Estadística, UCR"
+format: 
+  html:
+    theme: 
+      light: [sketchy, code_font_light.scss]
+      dark: [sketchy, code_font_dark.scss]
+lang: es
+editor: visual
+toc: true
+toc-depth: 3
+toc-location: left
+toc-title: "Contenido"
+toc-expand: 1
+number-sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+# Librerías
+
+```{r}
+library(ggfortify)
+library(forecast)
+library(fpp2)
+library(data.table)
+library(TTR)
+library(xts)
+library(tidyverse)
+library(lubridate)
+library(quantmod)
+```
+
+# Ejemplo: Pasajeros de avión
+
+```{r}
+data("AirPassengers")
+AirPassengers
+class(AirPassengers)
+AP <- as.numeric(AirPassengers)
+class(AP)
+
+# Serie de tiempo como un vector indexado.
+AP.data <- data.frame(tiempo=seq_along(AP),pasajero=AP)
+AP.data
+```
+
+## Formas diferentes de graficar.
+
+```{r}
+plot(AP.data$tiempo,AP.data$pasajero)
+plot(AP.data$tiempo,AP.data$pasajero,type="l")
+ggplot(AP.data, aes(x=tiempo,y=pasajero)) + geom_line()
+```
+
+## Diferentes objetos en R.
+
+```{r}
+str(AirPassengers)
+str(AP)
+```
+
+## Algunas características de un objeto `ts`.
+
+```{r}
+AP.ts <- ts(AP, start = c(1949, 1), frequency = 12)
+str(AP.ts)
+frequency(AP.ts) #la frecuencia de la serie
+cycle(AP.ts) #verificar el ciclo de cada observación
+```
+
+La función `plot` toma en cuenta el tipo de objeto.
+
+```{r}
+ts.plot(AP.ts)
+plot(AP)
+plot(AP.ts)
+
+autoplot(AP.ts) + labs(x ="tiempo", y = "pasajeros (miles)", title=" Pasajeros (1949-1961)") 
+
+```
+
+## Otras posibilidades de gráficos.
+
+Personalizar el gráfico usando el vector de tiempo.
+
+```{r}
+year <- rep(1949:1960,each=12)
+month <- rep(1:12, times=12)
+AP.data <- AP.data %>% mutate('year'=year, 'month'=month)
+
+AP.data1 <- AP.data %>% 
+            mutate(date = make_datetime(year = year, month = month))
+
+AP.data1$date <- as.Date(AP.data1$date)
+str(AP.data1)
+
+plot1 <- ggplot(AP.data1, aes(x=date,y=pasajero)) + 
+    geom_line() 
+plot1
+plot1 + scale_x_date(date_labels = "%m-%Y")
+
+
+plot1 + scale_x_date(date_breaks = "1 month")
+plot1 + scale_x_date(date_breaks = "6 month")
+plot1 + scale_x_date(date_breaks = "1 year")
+plot1 + scale_x_date(date_breaks = "2 year")
+```
+
+## Descomposición de series
+
+```{r}
+decomposeAP <- decompose(AP.ts,"multiplicative")
+autoplot(decomposeAP)
+```
+
+¿Qué notamos en este gráfico? tendencia, ciclos, estacionalidad.
+
+## 2. Efecto estacional
+
+Interpretación de estos gráficos.
+
+```{r}
+boxplot(AP.ts~cycle(AP.ts),xlab="mes", ylab = "pasajeros (miles)")
+ggseasonplot(AP.ts, year.labels=FALSE, continuous=TRUE)
+ggseasonplot(AP.ts, year.labels=FALSE, continuous=TRUE, polar = TRUE)
+```
+
+# Ejemplo: Producción de cemento (cuatrimetre)
+
+```{r}
+cemento<-fpp2::qcement
+str(cemento)
+head(cemento)
+tail(cemento)
+```
+
+Interpretación de estos gráficos.
+
+```{r}
+autoplot(cemento)
+ggseasonplot(cemento, year.labels=FALSE, continuous=TRUE)
+ggsubseriesplot(cemento)
+```
+
+# Ejemplo: gasto de medicamento anti-diabético (mensual)
+
+```{r}
+medicamento<-fpp2::a10
+autoplot(medicamento)
+ggseasonplot(medicamento, year.labels=FALSE, continuous=TRUE)
+ggseasonplot(medicamento, year.labels=FALSE, continuous=TRUE, polar = TRUE)
+ggsubseriesplot(medicamento)
+```
+
+# Ejemplo: Producción de cerveza en Australia
+
+```{r}
+cerveza<-fpp2::ausbeer
+autoplot(cerveza)
+ggseasonplot(cerveza, year.labels=FALSE, continuous=TRUE)
+ggsubseriesplot(cerveza)
+```
+
+## Lagplot
+
+```{r}
+gglagplot(cerveza,lags=16)
+gglagplot(cerveza,lags=16,do.lines=FALSE)
+```
+
+```{r}
+h=1
+gglagplot(cerveza,lags=h,do.lines=FALSE)
+```
+
+```{r}
+cerveza.shift<-shift(cerveza,n=h,type="lag")
+cbind(cerveza,cerveza.shift)
+
+plot(cerveza~cerveza.shift,xlim=c(200,600),ylim=c(200,600),
+     xy.labels=FALSE,col=cycle(cerveza),pch=20)
+cor(cerveza[-1],cerveza.shift[-1])
+```
+
+## Funcion de autocorrelacion
+
+```{r}
+acf(cerveza)
+ggAcf(cerveza)
+acf(ausbeer, plot = FALSE)
+```
+
+# Ejemplo: Muertes por accidente en EU 1973-1978
+
+```{r}
+autoplot(USAccDeaths)
+ggseasonplot(USAccDeaths, year.labels=FALSE, continuous=TRUE)
+gglagplot(USAccDeaths,lags=16)
+```
+
+# Ejemplo: Series multivariadas
+
+```{r}
+arrivals<-fpp2::arrivals
+str(arrivals)
+
+arrivals
+
+autoplot(arrivals)
+autoplot(arrivals, facets = TRUE)
+
+autoplot(arrivals, facets = TRUE) +
+  geom_smooth() +
+  labs("Llegadas internacionales a Australia",
+       y = "llegadas (miles)",
+       x = NULL)
+
+```
+
+# Promedio diario industrial Dow Jone
+
+```{r}
+getSymbols("^DJI",from = "2016/12/31",
+           to = "2018/12/31",
+           periodicity = "daily")
+y <- DJI$DJI.Close
+library(xts)
+plot(y)
+
+#note el comportamiento en diferentes segmentos de tiempo.
+plot(y[1:200])
+plot(y[1:100])
+```
+
+# Paquetes en R y extensiones
+
+Existen una variedad de formas de definir objetos de series temporales en R y distintos paquetes para graficar.
+
+<https://cran.r-project.org/web/views/TimeSeries.html>
+
+Les puede servir:
+
+<https://www.data-to-viz.com/>

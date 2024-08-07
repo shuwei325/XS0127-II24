@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Tema 1: Introducción al análisis de series temporales</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Shu Wei Chou Chen" />
+    <script src="presentacion_files/header-attrs/header-attrs.js"></script>
+    <link href="presentacion_files/remark-css/default.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="text_color.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Tema 1: Introducción al análisis de series temporales
+]
+.subtitle[
+## Curso: Análisis de series temporales (XS-0127)
+]
+.author[
+### Prof. Shu Wei Chou Chen
+]
+.institute[
+### Escuela de Estadística, UCR.
+]
+
+---
+
+
+
+
+
+
+# Contenido
+
+1. Consideraciones generales
+2. Series continuas y discretas
+3. Objetivos
+4. Componentes de las series temporales
+5. Ejemplos
+6. Análisis exploratorio de series de tiempo
+
+
+---
+# Consideraciones generales 
+
+Una **serie temporal** (**serie cronológica** o **serie de tiempo**) es una colección de datos recolectados en el tiempo.
+
+Ejemplos:
+  - **Economía**:
+      - exportaciones, ventas, tipo de cambio, bolsa de valores.
+  - **Medicina**:
+      - número de casos de una enfermedad, electrocardiograma de un paciente.
+  - **Meteorología**: 
+      - precipitación, temperatura
+      - contaminación de una cierta partícula.
+      - promedio anual de manchas solares
+  - **Demografía**:
+      - mortalidad, natalidad.
+      
+---
+# Series temporales continuas y discretas
+
+- Una series temporal **continua**: si las observaciones de la serie se registran para todo tiempo `\(t\)` en un intervalo de tiempo.
+  - registro continuo de la temperatura.
+  - registro continuo de marea en Puntarenas.
+
+- Una series temporal **discreta**: si las observaciones de la serie se registran  sólo en momentos particulares. Puede ser equiespaciadas o no.
+  - precipitación anual en San José.
+  - número diario de casos nuevos de COVID19.
+
+
+---
+# Series temporales continuas y discretas
+
+- El muestreo de una serie continua realizado en intervalos de tiempo iguales, `\(\Delta t\)`, en un intervalo de tiempo `\([0,T]\)` produce una serie discreta equiespaciada de `\(N=\frac{T}{\Delta t}\)` puntos.
+  - temperatura medida en cada hora.
+
+- Otro caso es cuando se toma el valor de la serie acumulando (o agregando) valores en intervalos de tiempos iguales.
+  - temperatura promedio de cada hora en una estación atmosférica.
+  - precipitación mensual en un área específica.
+
+- Ejemplos de la diapositiva 4:
+  - ¿Cuáles son discretas y cuáles son continuas?
+
+- En este curso, enfocamos en series discretas equiespaciadas.
+
+---
+# Ejemplos:
+
+.pull-left[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-2-1.png" width="100%" /&gt;
+Figura 1. Desviación de temperatura global promedio (1880-2015) en grados centígrados (periodo base 1951-1980)
+]
+
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-3-1.png" width="100%" /&gt;
+Figura 2. Grabación de "aaahhh" muestreada de 1000 puntos por segundo con n = 1020.
+]
+
+---
+# Objetivos del análisis de series temporales
+  
+  - **Predicción:** pronosticar valores en el futuro. Puede ser de corto plazo (series de ventas y de producción) o largo plazo (series de población, series relacionadas al calendamiento global, etc.).
+  
+  - **Descripción:** describir por medio de gráficos o modelos el fenómeno. Verificar de existencia de tendencias, ciclos, estacionalidad. Encontrar periodicidad de los datos.
+  
+  - **Simulación:** generar posibles escenarios con condiciones estrictas.
+
+  - **Control de procesos:** mantener en control una cierta variable en el tiempo.
+
+---
+# Componentes de las series temporales
+
+* Existe varios componentes en el comportamiento de series temporales:
+
+  1. **Tendencia:** comportamiento creciente o decreciente en largo plazo. Ej: crecimiento de población, ingresos por ventas.
+  2. **Estacionalidad:** patrón o variaciones afectadas por repetición de una frecuencia dada (ej. semana, mes y año.). Consecuencia de cambios climáticos, comportamiento de la gente en el tiempo. Ej: venta de productos que dependen de la temporada, temperatura, pasajes de avión. 
+  3. **Ciclo:** cuando los datos muestran subidas y bajadas de largo plazo, generalmente con frecuencia desconocida. Ej: ciclo económico, período de prosperidad alternando con período de recesión.
+  4. **Movimiento irregular o error:** variaciones en la serie que no siguen ningún patrón regular. Es el residuo que queda en una serie después de eliminar los componentes anteriores (tendencia-ciclo y estacionalidad).
+
+---
+# Ejemplo: pasajeros
+
+La base de datos "AirPassenger" en R proporciona total de pasajeros mensuales de una aerolínea estadounidense de 1949 a 1960. 
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-4-1.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+---
+# Descomposición de series temporales
+## Ejemplo: pasajeros
+
+.pull-left[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-5-1.png" width="90%" /&gt;
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-6-1.png" width="90%" /&gt;
+]
+
+
+---
+# Ejemplo: llegadas internacionales
+  
+La base de datos `fpp2::arrivals` tiene los datos de llegadas internacionales (en miles) a Australia de Japón, Nueva Zelanda, Reino Unido y Estados Unidos por cuatrimestre.
+
+.pull-left[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-7-1.png" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-8-1.png" width="100%" /&gt;
+]
+
+---
+# Ejemplo: llegadas internacionales
+  
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-9-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+# Ejemplo: 
+
+**Promedio diario industrial Dow Jone (12 de diciembre, 2016 a 12 de diciembre, 2018)**
+Ìndice compuesto por 30 mayores empresas en la bolsa de valores de los Estados Unidos. 
+
+
+
+```
+## [1] "DJI"
+```
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-10-1.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+---
+# Técnicas y métodos para Análisis de ST
+
+- Descomposición de series temporales.
+- Técnicas de suavizamiento exponencial.
+- Regresión.
+- Modelos ARIMA de Box-Jenkins.
+- Modelos ARCH-GARCH.
+- Análisis de intervención.
+- Modelos Espacio de Estados.
+- Modelos Multivariados.
+- Modelos causales.
+- Modelos no lineales.
+- ...
+
+---
+# Creación de documentos y reportes usando Quarto
+
+- Es un sistema que unifica los códigos, resultados y la redacción del autor, para producir presentaciones, informes, reportes, libros (y otros) con diversos formatos como html, PDF, Word, etc.
+- **Comunicación** de resultados estadísticos.
+- El proceso es **reproducible**, por lo que facilita la colaboración con otras personas.
+  
+Más detalles ver: &lt;https://quarto.org/&gt;
+
+![Diagrama de Quarto](quartoflow.png)
+
+
+---
+# Segunda parte
+## Análisis exploratorio de series de tiempo. 
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
