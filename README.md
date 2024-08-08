@@ -1,13 +1,11 @@
-# Análisis de series temporales
-
--   [Carta al
-    estudiante](https://shuwei325.github.io/XS0127-II24/XS0127%20Series%20temporales_2024.pdf)
-
 ## Profesores:
 
 -   **Grupo 1:** Shu Wei Chou Chen (<shuwei.chou@ucr.ac.cr>)
 -   **Grupo 2:** Luis Alberto Juárez Potoy
     (<luis.juarezpotoy@ucr.ac.cr>)
+
+[Carta al
+estudiante](https://shuwei325.github.io/XS0127-II24/XS0127%20Series%20temporales_2024.pdf)
 
 ## Temas:
 
