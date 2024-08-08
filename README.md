@@ -9,9 +9,9 @@ estudiante](https://shuwei325.github.io/XS0127-II24/XS0127%20Series%20temporales
 
 ## Presentaciones y materiales
 
-| Tema | Clase                                                                          | Laboratorio y materiales extras |
-|--------|-------------------------------|---------------------------------|
-| 1    | [Tema 0](./Tema_0/presentacion.html) <br> [Tema 1](./Tema_1/presentacion.html) | [Lab Tema 1](./Tema_1/lab.html) |
+| Tema             | Clase                                                                          | Laboratorio y materiales extras |
+|--------------|-----------------------------|------------------------------|
+| 1\. Introducción | [Tema 0](./Tema_0/presentacion.html) <br> [Tema 1](./Tema_1/presentacion.html) | [Lab Tema 1](./Tema_1/lab.html) |
 
 <!-- 2             | 28/08 | [Tema 2](https://shuwei325.github.io/SP1633-II23/Tema_2/presentacion.html)     | [Lab Tema 2](https://shuwei325.github.io/SP1633-II23/Tema_2/lab_Tema02.html) <br> [archivos](./Tema_2/Tema_2.zip) -->
 <!-- 3             | 4/09 |  [Tema 3](https://shuwei325.github.io/SP1633-II23/Tema_3/presentacion.html)     | [Lab Tema 3](https://shuwei325.github.io/SP1633-II23/Tema_3/lab_Tema03.html) <br> [archivos](./Tema_3/Tema_3.zip) -->
