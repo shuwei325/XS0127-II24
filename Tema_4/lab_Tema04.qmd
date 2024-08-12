@@ -1,0 +1,220 @@
+---
+title: "Tema IV: Regresión con series de tiempo"
+subtitle: "Curso: Análisis de series temporales"
+author: 
+  name: "Shu Wei Chou Chen"
+  affiliation: "Escuela de Estadística, UCR"
+format: 
+  html:
+    theme: 
+      light: [sketchy, code_font_light.scss]
+      dark: [sketchy, code_font_dark.scss]
+lang: es
+editor: visual
+toc: true
+toc-depth: 3
+toc-location: left
+toc-title: "Contenido"
+toc-expand: 1
+number-sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# librerías
+
+```{r , message=FALSE , warning=FALSE}
+library(ggplot2)
+library(forecast)
+library(fpp2)
+library(astsa)
+library(car)
+library(gamair)
+library(mgcv)
+```
+
+# Modelo de Regresión
+
+Cambios porcentuales trimestrales (tasas de crecimiento) del gasto de consumo personal real (Y) e ingresos disponibles(X), para EE.UU. desde 1970 a 2016.
+
+```{r}
+data(uschange)
+
+autoplot(uschange[,1:5], facets = TRUE, colour=TRUE) +
+  ylab("") + xlab("Year") +
+  guides(colour="none")
+
+uschange %>%
+  as.data.frame() %>%
+  GGally::ggpairs()
+
+mod0 <- lm(
+  Consumption ~ Income + Production + Unemployment + Savings,
+  data=uschange)
+summary(mod0)
+
+mod0 <- tslm(
+  Consumption ~ Income + Production + Unemployment + Savings,
+  data=uschange)
+summary(mod0)
+
+
+autoplot(uschange[,'Consumption'], series="Data") +
+  forecast::autolayer(fitted(mod0), series="Fitted") +
+  xlab("Year") + ylab("") +
+  ggtitle("Cambio porcentual de gastos de consumo en EE.UUU ") +
+  guides(colour=guide_legend(title=" "))
+
+checkresiduals(mod0)
+```
+
+# Modelos de tendencia
+
+## Ejemplo con graduados de ITCR de 1975 a 2002
+
+```{r}
+itcrgrad<-read.csv("ITCR.csv",sep=",")
+y<-ts(itcrgrad$graduados,start=1975)
+autoplot(y) 
+```
+
+## Crear variables independientes
+
+```{r}
+tiempo<-seq(1,length(y))
+tiempo2<-tiempo^2
+
+datos.itcrgrad<-data.frame(y,tiempo,tiempo2)
+
+mod1<-lm(y~tiempo+tiempo2,datos.itcrgrad)
+summary(mod1)
+
+mod.ts1<-tslm(y~trend+trend^2) #note la salida no incluye al tendencia al cuadrado.
+summary(mod.ts1)
+mod.ts2<-tslm(y~trend+I(trend^2))
+summary(mod.ts2)
+
+par(mfrow = c(1,1))
+e<-mod1$residuals
+```
+
+## Normalidad
+
+```{r}
+hist(e)
+shapiro.test(e)
+```
+
+## Homoscedasticidad
+
+```{r}
+ts.plot(e)
+lmtest::bptest(mod1)
+```
+
+## Autocorrelación
+
+```{r}
+lag1.plot(e)
+acf(mod1$residuals)
+durbinWatsonTest(mod1) #solamente considera un rezago
+checkresiduals(mod1)
+```
+
+# Regresión con series estacionales
+
+```{r}
+turistas<-read.csv("turistas.csv",sep=";")
+y<-ts(turistas$turistas,start=c(1991,1),frequency=12)
+```
+
+## transformacion logarítmica
+
+```{r}
+w<-log(y)
+autoplot(y) 
+autoplot(w)
+
+tiempo<-seq(1,length(y))
+tiempo2<-tiempo^2
+mes<-rep(seq(1,12),10)
+mes<-as.factor(mes)
+
+datos1<-data.frame(w,tiempo,tiempo2,mes)
+mod1<-lm(w~tiempo+tiempo2+mes,datos1)
+summary(mod1)
+levels(datos1$mes)
+
+datos2 <- within(datos1, mes <- relevel(mes, ref = 12))
+levels(datos2$mes)
+mod2 <- lm(w~tiempo+tiempo2+mes,datos2)
+summary(mod2)
+
+```
+
+## Pronóstico
+
+```{r}
+mod1<-lm(w~tiempo+tiempo2+mes,datos1)
+summary(mod1)
+try(
+pronostico<-forecast(mod1) #error
+)
+
+mod3<-tslm(w~trend+I(trend^2)+season)
+summary(mod3)
+pronostico<-forecast(mod3,h=12)
+pronostico
+
+autoplot(w) +
+  ylab("ln Y") +
+  autolayer(mod3$fitted.values, series = "ajustado") +
+  autolayer(pronostico, series = "pronostico")
+
+checkresiduals(mod3)
+```
+
+```{r}
+y<-ts(turistas$turistas,start=c(1991,1),frequency=12)
+y.train<-window(y,start=c(1991,1),end=c(1999,12))
+y.test<-window(y,start=c(2000,1),end=c(2000,12))
+mod4<-tslm(y.train~trend+I(trend^2)+season)
+summary(mod4)
+pronostico<-forecast(mod4,h=12)
+pronostico
+accuracy(pronostico)
+accuracy(pronostico,y.test)
+
+```
+
+## Modelos aditivos generalizados
+
+```{r}
+data("cairo")
+ctamm <- gamm(temp~s(day.of.year,bs="cc",k=20)+s(time,bs="cr"),
+              data=cairo,correlation=corAR1(form=~1|year))
+
+pred<-fitted(ctamm$gam)
+plot(cairo$temp~cairo$time,type="l", ylab="temp",xlab="time")
+points(cairo$time,pred,type="l",col=2,lwd=2)
+
+
+plot(cairo$temp,xlab='Day',ylab='Brightness')
+
+
+x<-cairo$temp
+x.spec <-mvspec(x,log="no")
+plot(x.spec)
+frecuencia<-x.spec$freq[x.spec$spec==max(x.spec$spec)]
+abline(v=frecuencia,col=2)
+1/frecuencia
+
+cos1<-cos(2*pi*frecuencia*cairo$time)
+sin1<-sin(2*pi*frecuencia*cairo$time)
+data=data.frame(x=x,time=cairo$time,cos=cos1,sen=sin1)
+mod<-lm(x~cos1+sin1,data=data)
+plot(cairo$temp~cairo$time,type="l", ylab="temp",xlab="time")
+points(cairo$time,fitted(mod),type="l",col=2,lwd=2)
+```

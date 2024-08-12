@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Tema 6: Modelos ARIMA de Box&amp;Jenkins - Parte 2</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Shu Wei Chou Chen" />
+    <script src="presentacion2_files/header-attrs/header-attrs.js"></script>
+    <link href="presentacion2_files/remark-css/default.css" rel="stylesheet" />
+    <link href="presentacion2_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="presentacion2_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="presentacion2_files/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="text_color.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Tema 6: Modelos ARIMA de Box&amp;Jenkins - Parte 2
+]
+.subtitle[
+## Curso: Análisis de series temporales
+]
+.author[
+### Prof. Shu Wei Chou Chen
+]
+.institute[
+### Escuela de Estadística, UCR
+]
+
+---
+
+
+
+
+
+
+
+#  En la semana pasada vimos:
+
+**Modelos ARIMA de Box&amp;Jenkins - Parte I**
+
+- Modelos autoregresivos.
+  - AR(1)
+  - AR(2)
+  
+- Modelos de medias móviles.
+  - MA(1)
+  - MA(2)
+  
+- ARMA(1,1)
+
+---
+# Tabla de resumen 1
+
+
+![Tabla de resumen](summary_table1.png)
+
+
+---
+# Contenido
+
+Hoy seguimos con el tema de:
+
+### Modelos ARIMA de Box&amp;Jenkins - Parte II
+
+- MA(q)
+- AR(p)
+- ARMA(p,q)
+- Operadores de rezagos
+- ARIMA(p,d,q)
+
+
+
+### Identificación, estimación y diagnóstico de modelos ARIMA
+
+
+---
+# MA(q)
+
+El Modelo no estacional de medias móviles de orden q, MA(q), está definido por el siguiente proceso estocástico lineal:
+  
+  `$$Z_t=C+a_t-\theta_1 a_{t-1}-\theta_2 a_{t-2}-...-\theta_q a_{t-q}$$`
+
+donde:&lt;br /&gt; 
+`\(C\)` y `\(\theta_i, i=1,...,q\)` son constantes desconocidas,&lt;br /&gt; 
+`\(a_t \sim wn(0,\sigma_a^2)\)`.
+
+---
+# MA(q)
+
+Se puede demostrar que MA(q) es estacionario para todo `\(\theta_i\)` para `\(i=1,...,q\)`, con:
+- `\(E(Z_t)=C=\mu\)`.
+
+- La f.a.c. teórica tiene correlaciones no nulas en los rezagos `\(1,...,q\)` y ceros para rezagos mayores que `\(q\)`, i.e.
+ `$$\rho_k \neq 0 ~~\text{para}~~ k=1,...,q.$$`
+ `$$\rho_k = 0 ~~\text{para}~~ k&gt;q.$$`
+
+- La función de autocorrelación parcial decae a cero según una combinación de exponenciales amortiguadas y/o ondas sinusoidales amortiguadas.
+
+- MA(q) siempre es estacionario pero no es invertible (veremos los supuestos).
+
+---
+# MA(q)
+
+
+- Considere `\(a_t \sim N(0,1)\)`, y un modelo MA(q).
+
+.pull-left[
+
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-2-1.png" width="90%" /&gt;
+
+]
+.pull-right[
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-3-1.png" width="90%" /&gt;
+]
+
+
+---
+# MA(q)
+
+
+- Considere `\(a_t \sim N(0,1)\)`, y un modelo MA(q).
+
+.pull-left[
+
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-4-1.png" width="90%" /&gt;
+
+]
+.pull-right[
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-5-1.png" width="90%" /&gt;
+]
+
+
+---
+# AR(p)
+
+- El modelo no estacional autoregresivo de orden p, AR(p), está definido por el siguiente proceso estocástico lineal:
+
+`$$Z_t=C+\phi_1 Z_{t-1}+\phi_2 Z_{t-2}+...+\phi_p Z_{t-p}+a_t$$`
+donde:&lt;br /&gt; 
+`\(C\)` y `\(\phi_i, i=1,...,p\)` son constantes desconocidas,&lt;br /&gt; 
+`\(a_t \sim wn(0,\sigma_a^2)\)`.
+
+---
+# AR(p)
+
+Se puede demostrar que:
+- `\(E(Z_t)= \frac{C}{1-\phi_1-\phi_2-...-\phi_p}=\mu\)`.
+
+- La función de autocorrelación decae a cero según una combinación de exponenciales amortiguadas y/o ondas sinusoidales amortiguadas.
+
+- La f.a.c.p. teórica tiene autocorrelaciones parciales no nulas en los rezagos `\(1,...,p\)` y ceros para rezagos mayores que `\(p\)`, i.e.
+ `$$\rho_{kk} \neq 0 ~~\text{para}~~ k=1,...,p.$$`
+ `$$\rho_{kk} = 0 ~~\text{para}~~ k&gt;p.$$`
+- El AR(p) es invertible pero no es siempre estacionario (veremos las condiciones).
+
+
+---
+# AR(p)
+
+- Considere `\(a_t \sim N(0,1)\)`, y un modelo AR(p).
+
+.pull-left[
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-6-1.png" width="90%" /&gt;
+
+]
+.pull-right[
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-7-1.png" width="90%" /&gt;
+]
+
+---
+# AR(p)
+
+
+- Considere `\(a_t \sim N(0,1)\)`, y un modelo AR(p).
+
+
+.pull-left[
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-8-1.png" width="90%" /&gt;
+
+]
+.pull-right[
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-9-1.png" width="90%" /&gt;
+]
+
+---
+# ARMA(p,q)
+## El modelo mixto no estacional autoregresivo de medias móviles de orden (p,q)
+
+- El ARMA(p,q) está definido por el siguiente proceso estocástico lineal:
+
+`$$Z_t=C+\phi_1 Z_{t-1}+\phi_2 Z_{t-2}+...+\phi_p Z_{t-p}$$`
+`$$+a_t-\theta_1 a_{t-1}-\theta_2 a_{t-2}-...-\theta_q a_{t-q}$$`
+donde:&lt;br /&gt; 
+`\(C\)`, `\(\phi_i, i=1,...,p\)` y `\(\theta_j, j=1,...,q\)` son constantes desconocidas,&lt;br /&gt; 
+`\(a_t \sim wn(0,\sigma_a^2)\)` (independiente de `\(Y_t\)`).
+
+---
+# ARMA(p,q)
+
+Se puede demostrar que:
+- `\(E(Z_t)= \frac{C}{1-\phi_1-\phi_2-...-\phi_p}=\mu\)`.
+
+- La función de autocorrelación decae a cero después de los primeros `\(q-p\)` según una combinación de exponenciales amortiguadas y/o ondas sinusoidales amortiguadas.
+
+- La f.a.c.p. teórica decae a cero después de los primeros `\(p-q\)` según una combinación de exponenciales amortiguadas y/o ondas sinusoidales amortiguadas.
+
+- ¿Condición de estacionariedad y invertibilidad? (veremos más adelante)
+
+
+---
+# ARMA(p,q)
+
+
+- Considere `\(a_t \sim N(0,1)\)`, y un modelo ARMA(2,1).
+.pull-left[
+
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-10-1.png" width="90%" /&gt;
+
+]
+.pull-right[
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-11-1.png" width="90%" /&gt;
+]
+
+
+---
+# ARMA(p,q)
+
+
+
+- Considere `\(a_t \sim N(0,1)\)`, y un modelo ARMA(1,2).
+
+
+.pull-left[
+
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-12-1.png" width="90%" /&gt;
+
+]
+.pull-right[
+&lt;img src="presentacion2_files/figure-html/unnamed-chunk-13-1.png" width="90%" /&gt;
+]
+
+
+---
+#  Operadores de rezagos
+- El operador de rezago `\(B\)` es definido como
+`$$B Z_t= Z_{t-1}$$`
+- El operador de rezago `\(B\)` se puede volver a aplicar:
+`$$B Z_{t-1} = Z_{t-2}=BBZ_{t}=B^2 Z_t$$`
+- De esta forma, se puede extender el operador de rezago a:
+`$$B^k Z_t = Z_{t-k}$$`
+
+- También existe la idea del operador inverso `\(B^{-1}\)` de tal forma que `\(B^{-1}B=1\)`, entonces
+`$$B^{-1} Z_{t-1} = Z_{t}$$`
+
+- Operador `\(B\)` es llamado retroceso (*backshift*).
+- Operador `\(B^{-1}\)` es llamado progreso (*forward-shift*).
+
+---
+#  Ejemplo con AR(2)
+
+Note que:
+`$$Z_t=C+\phi_1 Z_{t-1}+\phi_2 Z_{t-2}+a_t$$`
+`$$\Rightarrow Z_t-\phi_1 Z_{t-1}-\phi_2 Z_{t-2}=C+a_t$$`
+`$$\Rightarrow Z_t-\phi_1 Z_{t-1}-\phi_2 Z_{t-2}=\mu (1-\phi_1-\phi_2)+a_t$$`
+ya que `\(E(Z_t)= \frac{C}{1-\phi_1-\phi_2}=\mu\)`.
+
+Reordenando los términos, 
+`$$(Z_t-\mu)-\phi_1 (Z_{t-1}-\mu)-\phi_2 (Z_{t-2}-\mu)=a_t.$$`
+Tome `\(\tilde{Z}_t=Z_t-\mu\)`,
+`$$\tilde{Z}_t-\phi_1 \tilde{Z}_{t-1}-\phi_2 \tilde{Z}_{t-2}=a_t.$$`
+
+---
+#  Ejemplo con AR(2)
+
+`$$\tilde{Z}_t-\phi_1 \tilde{Z}_{t-1}-\phi_2 \tilde{Z}_{t-2}=a_t.$$`
+`$$\tilde{Z}_t-\phi_1 B \tilde{Z}_{t}-\phi_2  B^2 \tilde{Z}_{t}=a_t.$$`
+`$$(1-\phi_1 B -\phi_2  B^2) \tilde{Z}_t=a_t.$$`
+
+---
+# Ejemplo con MA(2)
+
+De la misma forma, el MA(2):
+  `$$Z_t=C+a_t-\theta_1 a_{t-1}-\theta_2 a_{t-2}$$`
+se puede escribir como  
+  `$$\tilde{Z}_t=(Z_t-\mu)=(1-\theta_1 B-\theta_2 B^2)a_t$$`
+
+
+
+---
+#  ARMA(p,q)
+
+
+- El ARMA(p,q):
+
+`$$Z_t=C+\phi_1 Z_{t-1}+\phi_2 Z_{t-2}+...+\phi_p Z_{t-p}$$`
+`$$+a_t-\theta_1 a_{t-1}-\theta_2 a_{t-2}-...-\theta_q a_{t-q}$$`
+
+
+se puede escribir como:
+
+`$$(1-\phi_1 B -\phi_2  B^2-...-\phi_p B^p)\tilde{Z}_t=(1-\theta_1 B-\theta_2 B^2-...-\theta_q B^q)a_t.$$`
+
+o
+
+`$$\phi(B)\tilde{Z}_t=\theta(B)a_t.$$`
+donde:&lt;br /&gt; 
+`\(\phi(B)=1-\phi_1 B -\phi_2  B^2-...-\phi_p B^p\)` es **el operador autoregresivo**.&lt;br /&gt; 
+`\(\theta(B)=1-\theta_1 B-\theta_2 B^2-...-\theta_q B^q\)` es **el operador de medias móviles**.
+
+---
+#  AR(p)
+
+- El modelo AR(p) se puede escribir como:
+`$$(1-\phi_1 B -\phi_2  B^2-...-\phi_p B^p)Z_t=C+a_t,$$`
+
+- **Resultado teórico:** Considere el polinomio autoregresivo:
+`$$\phi(z)=1-\phi_1 z -\phi_2  z^2-...-\phi_p z^p.$$`
+se puede demostrar que el proceso AR(p) es estacionario si todas las raíces `\(z\)` del polinomio autoregresivo tienen módulo mayores a 1.
+
+- **Nota:** requiere conocimiento de Ecuaciones en diferencia lineal (Sección 3.2. de Shumway &amp; Stoffer, 2017 y sección 3.6 de Brockwell &amp; Devis, 1991) 
+
+- **Ejemplo:** Para un AR(1), la raíz del polinomio autoregresivo es dada por la solución `\(z\)` que satisface la ecuación `\(\phi(z)=1-\phi_1 z=0\)`
+`\(\Rightarrow 1 = \phi_1 z\)`  
+`\(\Rightarrow \frac{1}{\phi_1} =  z\)`  
+`\(\Rightarrow |z| = |\frac{1}{\phi_1}|&gt;1 \Rightarrow 1&gt;|\phi_1|\)`   
+
+
+---
+# Ejemplo de AR(2)
+
+- Considere
+`$$Z_t=2+1.5 Z_{t-1}-0.9 Z_{t-2}+a_t$$`
+- La ecuación característica es: `\(\phi(B)=1-1.5 B +0.9  B^2\)` con raíces imaginarias:
+
+`$$B=\frac{1.5\pm \sqrt{2.25-3.6}}{1.8}=\frac{1.5\pm \sqrt{-1.35}}{1.8}=0.83\pm 0.65 i$$`
+donde `\(i=\sqrt{-1}\)`.
+
+- Las raíces de la ecuación quedan fuera del círculo unitario ya que `\(|B|=\sqrt{0.83^2+0.65^2}=1.05\)`.
+
+- Se puede mostrar usando las condiciones presentadas anteriormente:
+  - `\(|\phi_2|&lt;1\)`; `\(\phi_1+\phi_2&lt;1\)`; `\(-\phi_1+\phi_2&lt;1\)`.
+
+---
+# MA(q)
+
+- El modelo MA(q) se puede reescribir como:
+
+`$$Z_t-\mu=(1-\theta_1 B-\theta_2 B^2-...-\theta_q B^q)a_t,$$`
+
+
+- **Resultado teórico:** Considere el polinomio de medias móviles:
+`\(\theta(z)=1-\theta_1 z-\theta_2 z^2-...-\theta_q z^q\)`
+se puede demostrar que el proceso MA(q) es invertible si todas las raíces `\(z\)` del polinomio de medias móviles tienen módulo mayores a 1.
+
+- **Nota:** requiere conocimiento de Ecuaciones en diferencia lineal (Sección 3.2. de Shumway &amp; Stoffer, 2017 y sección 3.6 de Brockwell &amp; Devis, 1991) 
+
+---
+# Operador de diferencia
+
+- Recuerde que la primera diferencia de una serie se define como:
+`$$W_t=Z_t-Z_{t-1}.$$`
+- Utilizando la definición del operador de rezagos,
+`$$W_t=Z_t-Z_{t-1}=Z_t-BZ_{t}=(1-B)Z_t.$$`
+- Defina el operador de diferencia `\(\nabla\)` como 
+`$$\nabla Z_t=Z_t-BZ_{t}=(1-B)Z_t$$`
+- De esta forma, se puede generalizar a `\(d\)` diferencias
+
+`$$\nabla^d Z_t=(1-B)^d Z_t$$`
+
+
+---
+# Operador de diferencia
+
+
+- **Nota:** Son diferentes estas dos expresiones
+  - `$$(1-B^2)Z_t = Z_t-Z_{t-2},~~\text{y}$$`
+  - `$$\nabla^2 Z_t=(1-B)^2 Z_t=(1-2B+B^2)Z_t=Z_t-2Z_{t-1}+Z_{t-2}$$`
+- Compruebe la igualdad anterior con `\(\nabla^2 Z_t=\nabla (\nabla Z_t)\)`
+`$$\nabla (Z_t-Z_{t-1})=\nabla Z_t- \nabla Z_{t-1}=Z_t-Z_{t-1}-(Z_{t-1}-Z_{t-2})$$`
+`$$=Z_t-2 Z_{t-1}+Z_{t-2}$$`
+
+
+
+---
+# ARIMA(p,d,q)
+
+- En la práctica, muchas series son no estacionarias pero las diferencias consecutivas de orden `\(d\)` puede llegar a una serie estacionaria.
+
+- Sea `$$\tilde{W}_t=\nabla^d \tilde{Z}_t=(1-B)^d \tilde{Z}_t$$` la diferencia consecutiva de orden `\(d\)` de la serie `\(\tilde{Z}_t\)`.
+
+- Suponga que después de realizar estas `\(d\)` diferencias `\(\tilde{W}_t\)` puede ser representado por un proceso ARMA(p,q), i.e.
+
+`$$(1-\phi_1 B -\phi_2  B^2-...-\phi_p B^p)\tilde{W}_t=(1-\theta_1 B-\theta_2 B^2-...-\theta_q B^q)a_t,$$`
+O equivalentemente,
+
+`$$(1-\phi_1 B -\phi_2  B^2-...-\phi_p B^p)(1-B)^d \tilde{Z}_t=$$`
+`$$(1-\theta_1 B-\theta_2 B^2-...-\theta_q B^q)a_t.$$`
+
+---
+# ARIMA(p,d,q)
+
+- Usando las notaciones del operador de diferencia, autoregresivo `\(\phi(B)\)` y de medias móviles `\(\theta(B)\)`,
+
+`$$\phi(B)\nabla^d \tilde{Z}_t=\theta(B)a_t.$$`
+donde:&lt;br /&gt; 
+`\(\phi(B)=1-\phi_1 B -\phi_2  B^2-...-\phi_p B^p\)` es el operador autorregresivo.&lt;br /&gt; 
+`\(\theta(B)=1-\theta_1 B-\theta_2 B^2-...-\theta_q B^q\)` es el operador de medias móviles.
+`\(\nabla^d=(1-B)^d\)` es el operador de `\(d\)` diferencias.
+
+- Este modelo es denominado modelo autoregresivo integrado de promedios móviles (en inglés: AutoRegressive Integrated Moving Average model).
+
+- Se denota con ARIMA(p,d,q).
+
+---
+# ARIMA(p,d,q)
+
+- El término "integrado" proviene del hecho de que cuando `\(d=1\)`, `\(Z_t\)` se puede presentar como la suma:
+`$$Z_t=W_t+W_{t-1}+W_{t-2}+...,$$`
+i.e. obtener `\(Z_t\)` sumando (integrando) del proceso estacionario `\(W_t\)`.
+
+`$$W_t+W_{t-1}+W_{t-2}+...$$`
+`$$=(Z_{t}-Z_{t-1})+(Z_{t-1}-Z_{t-2})+(Z_{t-2}-Z_{t-3})+...$$`
+`$$=Z_{t}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~$$`
+
+
+---
+# Condiciones de ARIMA(p,d,q)
+
+- La condición de .red[**estacionariedad**] se verifica con **la ecuación característica del proceso autoregresivo** 
+`$$\phi(B)=1-\phi_1 B -\phi_2  B^2-...-\phi_p B^p=0.$$`
+- Si las raíces características de la ecuación característica están fuera del círculo unitario, el proceso AR(p) es estacionario.
+
+- De forma similar, la condición de .red[**invertibilidad**] se verifica con la ecuación característica del proceso de medias móviles 
+
+`$$\theta(B)=1-\theta_1 B-\theta_2 B^2-...-\theta_q B^q=0.$$`
+- Si las raíces características de la ecuación característica están fuera del círculo unitario, el proceso MA(q) es invertible.
+
+
+---
+# Próximo tema
+
+### Modelos ARIMA de Box&amp;Jenkins - Parte 3
+### Identificación, estimación y diagnóstico de modelos ARIMA.
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

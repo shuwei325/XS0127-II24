@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Tema 4: Regresión con series de tiempo</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Shu Wei Chou Chen" />
+    <script src="presentacion_files/header-attrs/header-attrs.js"></script>
+    <link href="presentacion_files/remark-css/default.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="text_color.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Tema 4: Regresión con series de tiempo
+]
+.subtitle[
+## Curso: Análisis de series temporales
+]
+.author[
+### Prof. Shu Wei Chou Chen
+]
+.institute[
+### Escuela de Estadística, UCR
+]
+
+---
+
+
+
+
+
+
+
+# Contenido
+
+1. Introducción
+2. Regresión lineal simple
+3. Regresión lineal múltiple
+2. Modelos de tendencia
+3. Transformaciones en modelos estacionales
+4. Modelos de series estacionales mediante variables indicadoras
+
+---
+# Introducción
+
+- La idea es ajustar un modelo de regresión para la serie temporal `\(Y_t, t=1,...,T\)` utlizando un conjunto de `\(p\)` covariables: `\(X_1,...,X_p\)`.
+
+- Por ejemplo: 
+  - `\(Y\)` una serie mensual de ventas con la variable independiente `\(X_1\)` gasto mensual en anuncios.
+  - `\(Y\)` una serie diaria de demanda de energía eléctrica con las variables independientes: `\(X_1\)` temperatura y `\(X_2\)` el día de la semana.
+
+
+---
+# Regresión lineal simple
+
+Un modelo de regresión lineal simple establece una relación lineal entre una variable dependiente `\(Y\)` y una sola variable predictora `\(X\)`:
+
+$$
+  Y_t = \beta_0 + \beta_1 X_t + \epsilon_t,
+$$
+donde los coeficientes `\(\beta_0\)` y `\(\beta_1\)` denotan la intersección y la pendientes, respectivamente;  
+`\(\varepsilon_t \overset{\text{iid}}{\sim} N(0,\sigma^2)\)`.
+
+- La intercepción `\(\beta_0\)` representa el valor predicho de `\(y\)` cuando `\(X=0\)`.
+- La pendiente `\(\beta_1\)` representa el cambio promedio previsto en `\(Y\)` resultante de un aumento de una unidad en `\(X\)`.
+
+
+---
+# Regresión lineal simple
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="presentacion_files/figure-html/SLRpop1-1.png" alt="Ejemplo simulado de un modelo de regresión lineal simple (Fig 5.1 de Hyndman)." width="50%" /&gt;
+&lt;p class="caption"&gt;Ejemplo simulado de un modelo de regresión lineal simple (Fig 5.1 de Hyndman).&lt;/p&gt;
+&lt;/div&gt;
+
+---
+# Regresión lineal simple: Ejemplo
+
+Se tienen datos de cambios porcentuales trimestrales (tasas de crecimiento) del gasto de consumo personal real (Y) e ingresos disponibles(X), para EE.UU. desde 1970 a 2016.
+
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-2-1.png" width="500px" height="300px" style="display: block; margin: auto;" /&gt;
+
+---
+# Regresión lineal simple: Ejemplo
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-3-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+# Regresión lineal simple: Ejemplo
+
+
+```r
+tslm(Consumption ~ Income, data=uschange)
+```
+
+```
+## 
+## Call:
+## tslm(formula = Consumption ~ Income, data = uschange)
+## 
+## Coefficients:
+## (Intercept)       Income  
+##      0.5451       0.2806
+```
+
+`$$\hat{Y}_t=0.55 + 0.28X_t.$$`
+El coeficiente de pendiente muestra que un aumento de una unidad en `\(X\)`(un aumento de 1  punto porcentual en el ingreso personal disponible) resulta en un promedio de 0.28 unidades de aumento en `\(Y\)`.
+
+
+---
+# Regresión lineal múltiple
+
+- La forma general de un modelo de regresión lineal múltiple es:
+
+`$$Y_t=\beta_0+\beta_1 X_{t,1}+\beta_2 X_{t,2}+...+\beta_p X_{t,p}+\epsilon_t, t=1,...,T,$$` 
+
+donde `\(Y_t\)` es la variable a pronosticar y `\(X_1,...,X_p\)` son los `\(p\)` variables predictoras. Las variables predictoras pueden ser numéricas o categóricas (con el manejo apropiado de factores).   
+Los coeficientes `\(\beta_1,...,\beta_p\)` miden el efecto de cada predictor después de tener en cuenta los efectos de todos los demás predictores del modelo. Por lo tanto, los coeficientes miden los efectos marginales de las variables predictoras.
+
+
+---
+# Regresión lineal múltiple
+
+- El modelo de regresión lineal múltiple en su forma matricial:
+
+$$
+Y=X \beta+\epsilon
+$$
+donde
+
+`$$Y=\left[ \begin{array}{c}Y_1 \\ \vdots \\Y_T \end{array}  \right],~~ X= \left(\begin{array}{ccccc} 1&amp; X_{11}&amp; X_{12} &amp; ... &amp; X_{1p}\\ 1 &amp;  X_{21}&amp; X_{22} &amp; ... &amp;X_{2p}\\ \vdots&amp; \vdots &amp; \ddots &amp;\vdots&amp; \vdots\\ 1&amp;  X_{T1}&amp; X_{T2} &amp; ... &amp;X_{Tp} \end{array}\right),$$`
+`$$\beta=\left[ \begin{array}{c}\beta_0 \\ \vdots \\\beta_T \end{array}  \right],~~\epsilon=\left[ \begin{array}{c}\epsilon_1 \\ \vdots \\\epsilon_T \end{array}  \right].$$` 
+
+---
+# Regresión lineal múltiple
+
+
+**Supocisiones del modelo:**
+
+- La relación entre la variable de pronóstico y las variables predictoras satisface esta ecuación lineal.
+
+- Los errores `\(\varepsilon_1,...,\varepsilon_T\)`:
+  - tienen media cero,
+  - no están autocorrelacionados,
+  - no están relacionados con las variables predictoras
+
+- Los errores se distribuyan normalmente con una varianza constante `\(\sigma^2\)`.
+
+- Cada predictor `\(X_i, i=1,...,p\)` supone que es observado y fijo, i.e. no es una variable aleatoria.
+
+---
+# Regresión lineal múltiple
+
+**Tópicos importantes:**
+
+1. Estimación:
+  - por mínimos cuadrados.
+  - por máxima verosimilitud.
+  
+2. Selección de variables
+
+3. Diagnósticos
+
+4. Medidas remediales
+
+---
+# Regresión lineal múltiple
+
+- Estimación por mínimos cuadrados: minimizar
+`$$\sum_{t=1}^T \epsilon_t^2=\sum_{t=1}^T [y_t-(\beta_0+\beta_1 x_{1,t}+...+\beta_k x_{k,t})]^2,$$`
+en función de `\(\beta_0,...\beta_k\)`.
+
+- Como resultado:
+$$
+\hat{\beta}=(X^\top X)^{-1}X^\top Y.
+$$
+
+- El estimador de máxima verosimilitud es equivalente (¿?)
+
+---
+# Regresión lineal múltiple: Ejemplo
+
+- El objetivo es generar pronósticos del consumo más precisos usando otros predictores, además del ingreso personal. 
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="presentacion_files/figure-html/MultiPredictors-1.png" alt="Variaciones porcentuales trimestrales en la producción industrial y ahorros personales y variaciones trimestrales en la tasa de desempleo de los EE. UU. Durante el período 1970T1-2016T3 (Hyndman)." width="40%" /&gt;
+&lt;p class="caption"&gt;Variaciones porcentuales trimestrales en la producción industrial y ahorros personales y variaciones trimestrales en la tasa de desempleo de los EE. UU. Durante el período 1970T1-2016T3 (Hyndman).&lt;/p&gt;
+&lt;/div&gt;
+
+
+---
+# Regresión lineal múltiple: Ejemplo
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="presentacion_files/figure-html/ScatterMatrix-1.png" alt="Matriz de diagrama de dispersión del gasto de consumo de EE. UU. y los cuatro predictores." width="50%" /&gt;
+&lt;p class="caption"&gt;Matriz de diagrama de dispersión del gasto de consumo de EE. UU. y los cuatro predictores.&lt;/p&gt;
+&lt;/div&gt;
+
+
+---
+# Regresión lineal múltiple: Ejemplo
+
+
+```
+## 
+## Call:
+## tslm(formula = Consumption ~ Income + Production + Unemployment + 
+##     Savings, data = uschange)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.88296 -0.17638 -0.03679  0.15251  1.20553 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   0.26729    0.03721   7.184 1.68e-11 ***
+## Income        0.71449    0.04219  16.934  &lt; 2e-16 ***
+## Production    0.04589    0.02588   1.773   0.0778 .  
+## Unemployment -0.20477    0.10550  -1.941   0.0538 .  
+## Savings      -0.04527    0.00278 -16.287  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.3286 on 182 degrees of freedom
+## Multiple R-squared:  0.754,	Adjusted R-squared:  0.7486 
+## F-statistic: 139.5 on 4 and 182 DF,  p-value: &lt; 2.2e-16
+```
+
+
+---
+# Regresión lineal múltiple: Ejemplo
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-4-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Regresión lineal múltiple: Ejemplo
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-5-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+```
+## 
+## 	Breusch-Godfrey test for serial correlation of order up to 8
+## 
+## data:  Residuals from Linear regression model
+## LM test = 14.874, df = 8, p-value = 0.06163
+```
+
+
+---
+# Regresión espuria
+
+- Cuando las series no son estacionarias, los resultados de regresión no son confiables y presenta lo que se llama correlación espuria.
+
+- Los datos de las series cronológicas de tendencias pueden parecer relacionados.
+- Por ejemplo, los pasajeros aéreos en Australia tienen una correlación positiva con la producción de arroz en Guinea.
+
+&lt;img src="presentacion_files/figure-html/spurious-1.png" width="350px" height="250px" style="display: block; margin: auto;" /&gt;
+
+---
+# Regresión espuria
+
+
+```
+## 
+## Call:
+## tslm(formula = aussies ~ guinearice)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -5.9448 -1.8917 -0.3272  1.8620 10.4210 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   -7.493      1.203  -6.229 2.25e-07 ***
+## guinearice    40.288      1.337  30.135  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 3.239 on 40 degrees of freedom
+## Multiple R-squared:  0.9578,	Adjusted R-squared:  0.9568 
+## F-statistic: 908.1 on 1 and 40 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+# Regresión espuria
+
+&lt;img src="presentacion_files/figure-html/tslm_mult2-1.png" width="300px" height="300px" style="display: block; margin: auto;" /&gt;
+
+```
+## 
+## 	Breusch-Godfrey test for serial correlation of order up to 8
+## 
+## data:  Residuals from Linear regression model
+## LM test = 28.813, df = 8, p-value = 0.000342
+```
+
+---
+# Modelos de tendencia
+
+- Como las variables independiente son asumidas como fijas, se puede utilizar el tiempo como una variable independiente.
+
+- Los modelos más frecuentes:
+  - **Tendencia lineal**:
+  `$$Y_t=\beta_0+\beta_1 t + \epsilon_t$$`
+  - **Tendencia cuadrática**:
+  `$$Y_t=\beta_0+\beta_1 t +\beta_2 t^2 + \epsilon_t$$`
+
+- Regresión no lineal.
+  - Por ejemplo: LOESS.
+
+---
+# Modelos de tendencia
+
+Vamos a ajustar un modelo de tendencia cuadrática a la serie de graduados de ITCR de 1975 a 2002:
+  `$$Y_t=\beta_0+\beta_1 t +\beta_2 t^2 + \epsilon_t, t=1,...,T$$`
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-6-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Modelos de tendencia
+
+
+
+```r
+tiempo&lt;-seq(1,length(y))
+tiempo2&lt;-tiempo^2
+mod&lt;-lm(y~tiempo+tiempo2)
+summary(mod)
+```
+
+```
+
+Call:
+lm(formula = y ~ tiempo + tiempo2)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-117.932  -49.683    4.506   43.234  155.390 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 127.0021    43.6818   2.907  0.00753 ** 
+tiempo      -12.7887     6.9427  -1.842  0.07736 .  
+tiempo2       1.5612     0.2323   6.720 4.83e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 71.61 on 25 degrees of freedom
+Multiple R-squared:  0.944,	Adjusted R-squared:  0.9395 
+F-statistic: 210.6 on 2 and 25 DF,  p-value: 2.268e-16
+```
+
+
+---
+# Modelos de tendencia
+
+.pull-left[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-8-1.png" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-9-1.png" width="100%" /&gt;
+]
+
+---
+# Modelos de tendencia
+
+- Supuestos:
+  - Normalidad
+  - Homoscedasticidad
+  - Autocorrelación en el tiempo
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-10-1.png" width="35%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Modelos de tendencia
+
+**Prueba de Durbin-Watson:**
+Dado un modelo de regresión ajustado, suponga que el tipo de autocorrelación entre los errores tiene orden 1, i.e.
+`$$\epsilon_t= \rho \epsilon_{t-1}+a_t$$`
+donde `\(\rho\)` es la correlación de un rezago y `\(a_t \sim N(0,\sigma^2)\)`
+
+Defina las hipótesis:&lt;br /&gt; 
+`\(H_0: \rho=0\)`  &lt;br /&gt; 
+`\(H_1: \rho \neq 0\)` &lt;br /&gt; 
+
+
+
+```r
+durbinWatsonTest(mod)
+```
+
+```
+ lag Autocorrelation D-W Statistic p-value
+   1       0.1488158      1.576164   0.118
+ Alternative hypothesis: rho != 0
+```
+
+---
+# Modelos de tendencia
+
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-12-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+```
+## 
+## 	Breusch-Godfrey test for serial correlation of order up to 6
+## 
+## data:  Residuals
+## LM test = 3.9215, df = 6, p-value = 0.6873
+```
+
+
+---
+# Transform. en modelos estacionales
+
+- Si la magnitud del cambio estacional se mantiene aproximadamente constante con el cambio del nivel de la serie, se dice que la variación estacional es constante (aditiva).
+- Si la variación estacional aumenta proporcionalmente con el nivel de la serie, se dice que la variación estacional es multiplicativa.
+
+Transformaciones usadas en la práctica:
+
+- `\(W_t=Y_t^\alpha,~~\text{con} -1&lt;\alpha&lt;1\)`
+
+- `\(W_t=\ln Y_t\)`
+
+---
+# Transform. en modelos estacionales
+
+### Ejemplo de turistas:
+
+
+.pull-left[
+Sin transformación `\((Y_t)\)`
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-13-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+]
+
+.pull-right[
+
+Con transformación `\((\ln Y_t)\)`
+
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-14-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+# Modelos de series estacionales mediante variables indicadoras
+- La idea es utilizar un factor (variables indicadoras) como predictor para indicar el periodo de la estacionalidad.  
+- Ejemplo de turistas (datos mensuales y con tendencia cuadrática)
+
+`$$ln Y_t=\alpha_0+\alpha_1 t + \alpha_2 t^2 +\beta_1 I_{1}+...+\beta_11 I_{11}+\epsilon_t$$` 
+
+
+```
+            Estimate Std. Error  t value Pr(&gt;|t|)
+(Intercept)  10.9420     0.0294 372.1819   0.0000
+tiempo        0.0086     0.0008  11.1807   0.0000
+tiempo2       0.0000     0.0000  -3.2291   0.0017
+mes2         -0.1013     0.0324  -3.1246   0.0023
+mes3         -0.1181     0.0324  -3.6408   0.0004
+mes4         -0.3467     0.0324 -10.6900   0.0000
+mes5         -0.5050     0.0324 -15.5680   0.0000
+mes6         -0.4243     0.0324 -13.0771   0.0000
+mes7         -0.2037     0.0325  -6.2784   0.0000
+mes8         -0.3326     0.0325 -10.2482   0.0000
+mes9         -0.6091     0.0325 -18.7601   0.0000
+mes10        -0.5293     0.0325 -16.2990   0.0000
+mes11        -0.3263     0.0325 -10.0431   0.0000
+mes12        -0.1042     0.0325  -3.2068   0.0018
+```
+
+---
+# Modelos de series estacionales mediante variables indicadoras
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-16-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Extensiones de modelos de regresión
+
+- Modelos no lineales.
+
+- Modelos lineales generalizados (GLM).
+  - variables dependientes que pertenecen a una familia exponencial: Poisson, Exponencial, etc.
+- Modelos aditivos generalizados (GAM).
+  - efectos fijos y aleatorios.
+
+- Modelos aditivos generalizados para locación, escala y forma (GAMLSS).
+
+
+---
+# Ejemplo
+
+###Temperatura diaria (F) en Cairo de 01-01-1995 hasta 21-05-2005
+
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-17-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Ejemplo
+
+###Temperatura diaria (F) en Cairo de 01-01-1995 hasta 21-05-2005
+
+- Ajuste de un GAM
+
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-18-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+# Ejemplo
+
+###Temperatura diaria (F) en Cairo de 01-01-1995 hasta 21-05-2005
+
+- Periodograma (análisis espectral)
+
+.pull-left[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-19-1.png" width="65%" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-20-1.png" width="65%" style="display: block; margin: auto;" /&gt;
+
+```
+## [1] 349.0909
+```
+]
+
+```
+## [1] 349.0909
+```
+
+La frecuencia dominante `\(\omega\)` es 0.002864583, es decir, se completa un ciclo aproximadamente cada 349.09 días.
+
+---
+# Ejemplo
+
+###Temperatura diaria (F) en Cairo de 01-01-1995 hasta 21-05-2005
+
+- Modelo de regresión lineal con covariables senos y cosenos
+`$$y_t=\alpha+\beta_1 cos(2 \pi \omega t)+\beta_2 sen(2 \pi \omega t)+\varepsilon_t$$`
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-22-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Vamos al laboratorio
+
+
+## Próximo tema
+
+### Tema 5: Modelos de series temporales
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

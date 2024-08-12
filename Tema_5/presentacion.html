@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Tema 5: Modelos de series temporales</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Shu Wei Chou Chen" />
+    <script src="presentacion_files/header-attrs/header-attrs.js"></script>
+    <link href="presentacion_files/remark-css/default.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="text_color.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Tema 5: Modelos de series temporales
+]
+.subtitle[
+## Curso: Análisis de series temporales
+]
+.author[
+### Prof. Shu Wei Chou Chen
+]
+.institute[
+### Escuela de Estadística, UCR
+]
+
+---
+
+
+
+
+
+
+# Contenido
+
+1. Introducción
+2. Proceso estacionario
+3. Medidas de dependencia
+4. Estimación
+4. Observaciones sobre las series estacionarias.
+5. Transformación y diferenciación de series.
+
+---
+# Introducción
+
+- El principal objetivo del análisis de series temporales es construir modelos estadísticos o matemáticos que proporcionan una descripción de los datos muestreados. 
+
+- Además, sirve para realizar inferencia del comportamiento en el intervalo observado o a futuro. 
+
+
+---
+# Introducción
+
+- Considere una serie temporal como una secuencia de variables aleatorias 
+`$$X_1,X_2,..,X_t,...$$`
+- **Proceso estocástico:** una colección de variables aleatorias indexada por un conjunto `\(\mathcal{T}\)`, 
+`$$\left\lbrace X_t, t \in \mathcal{T} \right\rbrace$$`
+
+- Vamos a enfocar el caso cuando `\(\mathcal{T}\)` es un conjunto discreto, i.e. `\(t=0,1,2,...\)`.
+
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="timeseriesmodel.png" alt="Figura tomada en Morettin (2017)" width="50%" /&gt;
+&lt;p class="caption"&gt;Figura tomada en Morettin (2017)&lt;/p&gt;
+&lt;/div&gt;
+
+
+---
+# Modelos de series temporales
+
+- Un modelo de series temporales generalmente especifica la distribución conjunta de la secuencia `\(X_t\)`.
+$$
+	P\left(X_1\leq x_1, X_2\leq x_2,...,X_t \leq x_t \right)
+$$
+- Una observación de un proceso estocástico es una serie de valores observados en el tiempo y es llamada **una realización** de un proceso estocástico.
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="realizaciones.png" alt="Figura tomada en Morettin (2017)" width="50%" /&gt;
+&lt;p class="caption"&gt;Figura tomada en Morettin (2017)&lt;/p&gt;
+&lt;/div&gt;
+
+---
+# Ruido blanco
+
+.pull-left[
+- Una colección de variables aleatorias no correlacionadas, `\(w_t\)`, con media 0 y variancia `\(\sigma_w^2\)`.
+
+- Denotado por `\(w_t \sim wn(0,\sigma_w^2)\)`.
+
+- Simulación de una colección de `\(w_t \sim N(0,1)\)` con `\(T=500\)`.
+
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-4-1.png" width="90%" /&gt;
+]
+
+
+---
+# Medias móviles
+
+.pull-left[
+- Considere `\(w_t \sim wn(0,\sigma_w^2)\)`.
+
+- Sea `\(v_t=\frac{1}{3}(w_{t-1}+w_{t}+w_{t+1})\)`
+
+- Esta serie se ve más suave y presenta menos picos que el caso anterior.
+
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-5-1.png" width="90%" /&gt;
+]
+
+
+---
+# Medias móviles
+
+- ¿Qué pasaría si aumento el orden `\(k\)`?.
+
+- Sea `\(v_t=\frac{1}{m} \sum\limits_{j=-k}^k w_{t+j},\)`
+
+.pull-left[
+
+- `\(k=5\)`
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-6-1.png" width="90%" /&gt;
+
+]
+.pull-right[
+- `\(k=9\)`
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-7-1.png" width="90%" /&gt;
+]
+
+
+---
+# Autoregresión
+
+.pull-left[
+
+- Sea `\(w_t \sim wn(0,\sigma_w^2)\)`.
+
+- Considere un modelo AR(1): `$$X_t=\phi X_{t-1}+w_t$$`
+
+- Veamos dos casos de `\(\phi=0.9\)` y `\(-0.9\)`.
+
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-8-1.png" width="100%" /&gt;
+]
+
+---
+# Señal + ruido blanco
+
+
+.pull-left[
+
+- Muchos modelos series temporales asumen que existe una señal con alguna variación periódica, contaminada por un ruido aleatorio.
+
+- Considere `\(x_t=2 \cos \left( 2 \pi \frac{t+15}{50} \right)+ w_t\)` para `\(t=1,...,500\)`.
+
+- El modelo general `\(A cos(2\pi \omega t + \phi)\)` con amplitud `\(A\)`, frecuencia `\(\omega\)`, y fase `\(\phi\)`.
+
+- El ejemplo anterior considera `\(A=2\)`, `\(\omega=1/50\)` (un ciclo cada 50 puntos en el tiempo) y `\(\phi=2 \pi 15/50=0.6 \pi\)`.
+
+
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-9-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Medidas de dependencia
+
+- Una descripción completa de un modelo de series temporales es proporcionado por la distribución de probabilidad conjunta, i.e. dados tiempos arbitrarios `\(t_1,...,t_n\)` para `\(n\)` entero positivo y `\(c_1,...,c_n\)` n valores constantes:
+
+$$
+	F_{t_1,...,t_n}(c_1,...,c_n)=P\left(X_1\leq c_1, X_2\leq c_2,...,X_t \leq c_t \right).
+$$
+- Aunque esa distribución describe los datos globalmente, en la práctica, esa distribución multidimencional es dificil de conocer, excepto cuando es normal multivariado (¿por qué?)
+
+- La distribución marginal en el tiempo `\(t\)`,
+$$
+F_t(x)=P(X \leq x).
+$$
+- La función densidad marginal en el tiempo `\(t\)`,
+$$
+f_t(x)= \frac{\partial F_t(x)}{\partial x}.
+$$
+
+
+---
+# Medidas de dependencia
+
+- **La función de media** para el tiempo `\(t\)` es definida por
+
+`$$\mu_t= E(X_t)=\int_{-\infty}^\infty x f_t(x)dx$$`
+- Considere el ejemplo de medias móviles: `\(v_t=\frac{1}{3}(w_{t-1}+w_{t}+w_{t+1})\)`
+
+`$$E(v_t)=\frac{1}{3}\left[E(w_{t-1})+E(w_{t})+E(w_{t+1})\right]=0$$`
+- Considere el ejemplo de la señal+ruido: `\(x_t=2 \cos \left( 2 \pi \frac{t+15}{50} \right)+ w_t\)`
+
+`$$E(x_t)=2 \cos \left( 2 \pi \frac{t+15}{50} \right)+ E(w_t)=2 \cos \left( 2 \pi \frac{t+15}{50} \right)$$`
+
+
+
+
+---
+# Medidas de dependencia
+
+- **La función de autocovariancia** es definida por
+
+`$$\gamma_X(t,s)=\gamma(t,s)= Cov(X_t,X_s)=E\left[ (X_t-\mu_t)(X_s-\mu_s) \right]$$`
+
+- Mide la dependencia lineal entre dos puntos de tiempo de la misma serie.
+
+- **La función de variancia** en el tiempo `\(t\)` es definida por
+`$$\gamma_X(t,t)=Var(X_t)$$`
+
+- Considere el ejemplo del ruido blanco `\(w_t\)`:
+
+$$
+\gamma_w(t,s)=Cov(w_t,w_s)=\left\lbrace 
+`\begin{aligned}
+\sigma_w^2, &amp; &amp; t = s, \\
+0, &amp; &amp;  t \neq s.
+\end{aligned}`
+\right. 
+$$
+
+
+---
+# Medidas de dependencia
+
+&gt;**Propiedad: (Covariancia de combinaciones lineales)** Si U y V son combinaciones de variables aleatorias `\(X_1,...,X_m\)` y `\(Y_1,...,Y_r\)` con variancias finitas, respectivamente:
+`$$U=\sum_{i=1}^{m} a_i X_i,~\text{y}~~~~~~V=\sum_{j=1}^{r} b_i Y_i.$$`
+Entonces,
+`$$Cov(U,V)=\sum_{i=1}^{m} \sum_{j=1}^{r} a_i b_j Cov(X_i,Y_j)$$`
+
+---
+# Ejemplo
+
+- Considere el ejemplo de medias móviles: `\(v_t=\frac{1}{3}(w_{t-1}+w_{t}+w_{t+1})\)`
+ 
+- La función de autocovariancia es definida por
+
+  `\(\gamma_v(t,s)=\gamma_v(t,t+h)=Cov(v_{t},v_{t+h})\)`
+
+- Caso 1 `\((h=0)\)`: 
+
+  `\(\gamma_v(t,t+0)=Cov(v_{t},v_{t+0})=Var(v_t)\)`
+  `\(=\frac{1}{9}Var(w_{t-1}+w_{t}+w_{t+1})=\frac{3}{9} Var(w_t)=\frac{1}{3} \sigma_w^2.\)`
+
+- Caso 2 `\((h=1)\)`: 
+
+  `\(\gamma_v(t,t+1)=Cov(v_{t},v_{t+1})\)`
+  `\(=Cov\left[\frac{1}{3}(w_{t-1}+w_{t}+w_{t+1}),\frac{1}{3}(w_{t}+w_{t+1}+w_{t+2})\right]\)`
+`\(=\frac{1}{9}\left[ Cov(w_{t},w_{t})+Cov(w_{t+1},w_{t+1}) \right]\)`
+`\(=\frac{2}{9}\sigma_w^2\)`
+
+- Caso 3 `\((h=-1)\)`: Similarmente se obtiene `\(\gamma_v(t,t-1)=\frac{2}{9}\sigma_w^2\)`
+  
+---
+# Ejemplo
+
+- Caso 4 `\((h=2~o~h=-2)\)`: 
+
+  `\(\gamma_v(t,t+2)=\gamma_v(t,t-2)=\frac{1}{9}\sigma_w^2\)`
+  
+- Caso 5 `\((h&gt;2~o~h&lt;-2)\)`: 
+
+  `\(\gamma_v(t,t+h)=0.\)`
+
+Entonces,
+$$
+\gamma_w(t,t+h)=\left\lbrace 
+`\begin{aligned}
+\frac{3}{9}\sigma_w^2, &amp; &amp; h = 0 \\
+\frac{2}{9}\sigma_w^2, &amp; &amp;  |h| = 1 \\
+\frac{1}{9}\sigma_w^2, &amp; &amp;  |h| = 2 \\
+0, &amp; &amp;  |h| &gt; 2,
+\end{aligned}`
+\right. 
+$$
+
+
+---
+# Medidas de dependencia
+
+- **La función de autocorrelación** es definida por
+
+`$$\rho_X(t,s)=\frac{\gamma(t,s)}{\sqrt{\gamma(t,t)\gamma(s,s)}}$$`
+- Considere el ejemplo del ruido blanco `\(w_t\)`:
+
+$$
+\rho_w(t,s)=\left\lbrace 
+`\begin{aligned}
+1, &amp; &amp; t = s, \\
+0, &amp; &amp;  t \neq s.
+\end{aligned}`
+\right. 
+$$
+
+
+---
+# Ejemplo
+
+- Considere el ejemplo de medias móviles: `\(v_t=\frac{1}{3}(w_{t-1}+w_{t}+w_{t+1})\)`
+
+- La función de autocorrelación:
+$$
+\rho_w(t,t+h)=\left\lbrace 
+`\begin{aligned}
+1, &amp; &amp; h = 0 \\
+\frac{2}{3}, &amp; &amp;  |h| = 1 \\
+\frac{1}{3}, &amp; &amp;  |h| = 2 \\
+0, &amp; &amp;  |h| &gt; 2,
+\end{aligned}`
+\right. 
+$$
+
+
+---
+# Ejemplo
+
+- Recuerden el ejmplo de señal: `\(x_t=2 \cos \left( 2 \pi \frac{t+15}{50} \right)+ w_t\)` para `\(t=1,...,500\)`. 
+- Calculen la autocovariancia.
+
+
+**Observaciones:**
+- Aunque las medidas teóricas descritas (función de media, variancia, autocovariancia y autocorrelación) son importantes, pero no tenemos herramientas para calcularlas si solamente tenemos una realización del proceso en la práctica.
+
+
+---
+# Procesos estacionarios
+
+**Definición:** Un **proceso estrictamente estacionario** es un proceso estocástico cuyo comportamiento de cada colección de valores
+	`$$\left\lbrace X_{t_1},X_{t_2},...,X_{t_k} \right\rbrace$$`
+	es idéntico a un conjunto bajo un cambio de tiempo
+	`$$\left\lbrace X_{t_1+h},X_{t_2+h},...,X_{t_k+h} \right\rbrace.$$`
+	Esto es,
+	`$$P\left(X_{t_1} \leq c_1,...,X_{t_k} \leq c_k \right)=P\left(X_{t_1+h}\leq c_1,...,X_{t_k+h} \leq c_k \right)$$`
+	para todo `\(k=1,2,...\)`, todo tiempo `\(t_1,...,t_k\)`, todos las constantes `\(c_1,...,c_k\)` y todos los cambios de tiempo `\(h=0, \pm 1, \pm 2,...\)`.
+
+---
+# Procesos estacionarios
+
+**Definición:** Un **proceso débilmente estacionario** es un proceso con variancia finita tal que 
+1. la función de la media es constante `$$\mu_t=E(X_t)=\mu$$`
+
+2. La función de autocovariancia depende solamente de la diferencia de dos puntos `\(t, t+h\)`
+ `$$\gamma(t,t+h)=Cov(X_t,X_{t+h})=Cov(X_0,X_h):=\gamma(h).$$`
+
+Consecuentemente, la **función de autocorrelación** de un proceso estacionario es definido como
+
+`$$\rho(h)=\frac{\gamma(t,t+h)}{\sqrt{\gamma(t+h,t+h)\gamma(t,t)}}=\frac{\gamma(h)}{\gamma(0)}.$$`
+- En la práctica, se refiere simplemente a un proceso estacionario.
+
+
+
+---
+# Ejemplo
+
+- Considere el ejemplo del ruido blanco `\(w_t\)`
+
+`$$E(w_t)=0 ~~\text{para todo}~ t$$`.
+
+$$
+\gamma_w(t,t+h)=\left\lbrace 
+`\begin{aligned}
+\sigma_w^2, &amp; &amp; h = 0 \\
+0, &amp; &amp;  h \neq 0,
+\end{aligned}`
+\right. 
+$$
+
+Entonces, `\(w_t\)` es estacionario.
+
+---
+# Ejemplo
+
+- Considere el ejemplo de medias móviles: `\(v_t=\frac{1}{3}(w_{t-1}+w_{t}+w_{t+1})\)`
+ 
+- La función de autocovariancia y la f. de autocorrelación están dadas por
+
+$$
+\gamma_w(t,t+h)=\left\lbrace 
+`\begin{aligned}
+\frac{3}{9}\sigma_w^2, &amp; &amp; h = 0 \\
+\frac{2}{9}\sigma_w^2, &amp; &amp;  |h| = 1 \\
+\frac{1}{9}\sigma_w^2, &amp; &amp;  |h| = 2 \\
+0, &amp; &amp;  |h| &gt; 2,
+\end{aligned}`
+\right. 
+~~~\rho_w(t,t+h)=\left\lbrace 
+`\begin{aligned}
+1, &amp; &amp; h = 0 \\
+\frac{2}{3}, &amp; &amp;  |h| = 1 \\
+\frac{1}{3}, &amp; &amp;  |h| = 2 \\
+0, &amp; &amp;  |h| &gt; 2,
+\end{aligned}`
+\right. 
+$$
+
+- Se conculye que `\(v_t\)` es débilmente estacionario ya que la media es constante y `\(\gamma_v(t,t+h)=\gamma_v(h)\)` depende solamente de `\(h\)`.
+
+
+---
+# Estimación
+
+- Aquí en adelante vamos a referir al concepto de estacionariedad débil con solamente **estacionariedad**.
+- Si una serie es estacionaria, la media `\(\mu_t=\mu\)` es constante y podemos estimarla usando **la media muestral**
+
+`$$\bar{X}=\frac{\sum\limits_{t=1}^T X_t}{T}$$`
+- **Resultados teóricos:** Se puede probar que
+`$$E\left[\bar{X}\right]=\mu$$`
+$$ Var\left[\bar{X}\right]=\frac{1}{T} \sum_{h=-n}^n \left(1-\frac{|h|}{T} \right) \gamma_X(h) $$
+
+---
+# Estimación
+
+- Para entender la idea de la autocorrelación, recuerde que la estimación de la covariancia y la autocorrelación de una muestra observada de dos variables `\(X\)` y `\(Y\)` con una muestra de `\(n\)` valores es
+
+`$$s_{X,Y}=\frac{\sum\limits_{i=1}^{n} (X_{i}-\bar{X})(Y_{i}-\bar{Y})}{n}$$`
+`$$r_{X,Y}=\frac{\sum\limits_{i=1}^{n} (X_{i}-\bar{X})(Y_{i}-\bar{Y})}{\sqrt{\sum\limits_{i=1}^{n} (X_{i}-\bar{X})^2 \sum\limits_{i=1}^{n} (Y_{i}-\bar{Y})^2}}$$`
+
+---
+# Estimación
+
+- Suponga que tenemos las observaciones `\(X_1,...,X_T\)` de una serie `\(X\)`, considere la misma serie con un rezago, i.e. 
+`$$X_2,...,X_{T-1},X_T$$`
+`$$X_1...,X_{T-2},X_{T-1}$$`
+- Podemos calcular la correlación como si fueran dos variables distintas: 
+
+`$$r_1=\frac{\sum\limits_{t=1}^{T-1} (X_{t+1}-\bar{X}_1)(X_{t}-\bar{X}_2)}{\sqrt{\sum\limits_{t=1}^{T-1} (X_{t+1}-\bar{X}_1)^2 \sum\limits_{t=1}^{T-1} (X_{t}-\bar{X}_2)^2}}$$`
+donde `\(\bar{X}_1\)` es la media de los `\(T-1\)` últimos valores de la serie y `\(\bar{X}_2\)` es la media de los `\(T-1\)` primeros valores de la serie.
+
+
+---
+# Estimación
+
+- Si la serie es estacionaria, 
+  - `\(\bar{X}_1\)` y `\(\bar{X}_2\)` pueden ser reemplazadas por `\(\bar{X}\)`.
+  - El denominador puede ser reemplazado por `\(\sum\limits_{t=1}^{T} (X_{t}-\bar{X})^2\)`.
+  
+- Entonces,  
+`$$r_1=\frac{\sum\limits_{t=1}^{T-1} (X_{t+1}-\bar{X})(X_{t}-\bar{X})}{\sum\limits_{t=1}^{T} (X_{t}-\bar{X})^2}$$`
+es la estimación de la autocorrelación de rezago `\(h=1\)`.
+
+---
+# Estimación
+
+- Análogamente se puede calcular la autocorrelación muestral de rezago `\(h\)` con:
+
+`$$r_h=\frac{\sum\limits_{t=1}^{T-h} (X_{t+h}-\bar{X})(X_{t}-\bar{X})}{\sum\limits_{t=1}^{T} (X_{t}-\bar{X})^2}$$`
+para `\(h=0,1,2,..., T-1\)`.
+
+- De forma análoga, se define `\(r_h=r_{-h}\)`
+
+- Recuerde que la función de autocorrelación teórica es simétrica:
+
+`$$\rho(h)=\rho(-h).$$`
+
+
+
+---
+# Estimación
+
+- Entonces, **la función de autocovariancia muestral** es definida por
+`$$\hat{\gamma}_X(h)=\frac{1}{T}\sum_{t=1}^{T-h} (X_{t+h}-\bar{X})(X_{t}-\bar{X}),$$`
+con `\(\hat{\gamma}_X(-h)=\hat{\gamma}_X(h)\)` para `\(h=0,1,...,T-1\)`.
+
+
+- **La función de autocorrelación muestral** es definida por
+`$$\hat{\rho}_X(h)=r_X(h)=r_h=\frac{\hat{\gamma}_X(h)}{\hat{\gamma}_X(0)}$$`
+
+`$$=\frac{\sum\limits_{t=1}^{T-h} (X_{t+h}-\bar{X})(X_{t}-\bar{X})}{\sum\limits_{t=1}^{T} (X_{t}-\bar{X})^2}$$`
+
+---
+# Estimación
+
+**Propiedad:**
+
+Si `\(X_t\)` tiene sus primeros 4 momentos finitos, y `\(X_t\)` es ruido blanco, entonces para `\(T\)` suficientemente grande, la función de autocorrelación muestral `\(\hat{\rho}_X(h)=r_h, h=1,2,..., H\)` donde `\(H\)` es un valor entero y fijo, es aproximadamente normal con media cero y desviación estándar
+`$$\sigma_{\hat{\rho}_X(h)}=\frac{1}{\sqrt{T}}.$$`
+
+**Nota:**
+
+- Con este resultado, si se tiene un ruido blanco, entonces se espera que con aproximadamente 95% de confianza, las `\(\hat{\rho}_X(h)\)` deberían caer dentro del intervalo `\(\left( \frac{-2}{\sqrt{T}},\frac{2}{\sqrt{T}} \right)\)`.
+puede estimar intervalos de confianza  e identificar aquellos rezagos que tienen autocorrelación significativa.
+- En la práctica, se grafica los pares ordenados `\((h,r_h),h=1,2,...\)` para visualizar la función de autocorrelación muestral. Este gráfico se denomina **correlograma**.
+
+
+---
+# Estimación
+
+**Ejemplo de ruido blanco:**
+
+.pull-left[
+- Si `\(w_t \sim wn(0,\sigma_w^2)\)`, la función de autocorrelación es
+
+
+$$
+\rho_w(t,s)=\left\lbrace 
+`\begin{aligned}
+1, &amp; &amp; t = s \\
+0, &amp; &amp;  t \neq s,
+\end{aligned}`
+\right. 
+$$
+o
+$$
+\rho_w(h)=\left\lbrace 
+`\begin{aligned}
+1, &amp; &amp; h = 0 \\
+0, &amp; &amp;  h \neq 0,
+\end{aligned}`
+\right. 
+$$
+
+]
+.pull-right[
+La función de autocorrelación estimada de 500 observaciones de `\(w_t \overset{\text{iid}}{\sim} N(0,1)\)`.
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-10-1.png" width="90%" /&gt;
+]
+
+
+---
+# Estimación
+
+**Ejemplo de medias móviles:**
+
+.pull-left[
+
+- Sea `\(v_t=\frac{1}{3}(w_{t-1}+w_{t}+w_{t+1})\)`
+
+La función de autocorrelación es
+$$
+\rho_v(h)=\left\lbrace 
+`\begin{aligned}
+1, &amp; &amp; h = 0 \\
+\frac{2}{3}, &amp; &amp;  |h| = 1 \\
+\frac{1}{3}, &amp; &amp;  |h| = 2 \\
+0, &amp; &amp;  |h| &gt; 2,
+\end{aligned}`
+\right. 
+$$
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-11-1.png" width="90%" /&gt;
+]
+
+---
+# Ejemplos: sorteo navideño de 2008
+
+- **Ejemplo 5.1 de Hernández (2011):** 135 números del sorteo de la lotería de Naividad de 2008 según el orden de extracción. Los números son muestreados aleatoriamente con reemplazo de una distribución uniforme discreta enteros entre 0 y 99.
+
+.pull-left[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-12-1.png" width="90%" /&gt;
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-13-1.png" width="90%" /&gt;
+]
+
+
+---
+# Ejemplos: pasajeros
+
+
+La base de datos "AirPassenger" en R proporciona total de pasajeros mensuales de una aerolínea estadounidense de 1949 a 1960. 
+
+.pull-left[
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-14-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-15-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+¿La serie es estacionaria?
+
+.red[**Nota:**] ¿Qué pasa con la estimación de las autocorrelaciones?
+
+
+---
+# Ejemplos: contrayentes
+
+Ejemplo 2.1 de Hernández (2011): Serie de número de contrayentes en los matrimonios celebrados en Costa Rica de 1978 a 1983.
+
+.pull-left[
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-16-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-17-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+
+¿La serie es estacionaria?
+
+---
+# Ejemplos: graduados del ITCR
+
+- Ejemplo 3.2 de Hernández (2011): Serie de graduados del ITCR de 1975-2002.
+
+.pull-left[
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-18-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-19-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+¿La serie es estacionaria?
+
+
+---
+# Observaciones 
+## Sobre el comportamiento de las series estacionarias
+
+Generalmente en la práctica, las series estacionarias presentan las siguientes características:
+- una media o nivel constante a lo largo del tiempo
+- una variabilidad constante en el tiempo (con pequeñas variaciones)
+- su función de autocorrelación generalmente decae rápidamente.
+
+¡pero podría tener algunas excepciones!
+
+
+---
+# Transform. y diferenciación de series
+
+- En la práctica, la mayoría de las series no son estacionarias.
+
+- Si la variancia cambia con el nivel de la serie, se recomienda usar
+`$$W_t=\ln X_t.$$`
+- Otra transformación útil es la diferenciación de la serie:
+`$$W_t=\nabla X_t = X_t-X_{t-1},~~t=2,...,T.$$`
+
+---
+# Transform. y diferenciación de series
+
+- Ejemplo 3.2 de Hernández (2011): Serie de graduados del ITCR de 1975-2002.
+
+.pull-left[
+La serie original:
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-20-1.png" width="50%" style="display: block; margin: auto;" /&gt;&lt;img src="presentacion_files/figure-html/unnamed-chunk-20-2.png" width="50%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+La serie con una diferencia:
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-21-1.png" width="50%" style="display: block; margin: auto;" /&gt;&lt;img src="presentacion_files/figure-html/unnamed-chunk-21-2.png" width="50%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+# Transform. y diferenciación de series
+
+- Ejemplo del valor de cierre de Google (25/02/2013-13/02/2017)
+
+.pull-left[
+La serie original:
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-22-1.png" width="50%" style="display: block; margin: auto;" /&gt;&lt;img src="presentacion_files/figure-html/unnamed-chunk-22-2.png" width="50%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+La serie con una diferencia:
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-23-1.png" width="50%" style="display: block; margin: auto;" /&gt;&lt;img src="presentacion_files/figure-html/unnamed-chunk-23-2.png" width="50%" style="display: block; margin: auto;" /&gt;
+]
+
+
+
+---
+# Caminata aleatoria
+
+Si una serie diferenciada resulta ser un ruido blanco `\(\epsilon_t\)`,
+
+`$$W_t=\nabla X_t = X_t-X_{t-1}= \epsilon_t,$$`
+entonces reordenando se tiene un modelo de **caminata aleatoria**:
+
+`$$X_t= X_{t-1} + \epsilon_t$$`
+Un modelo no estacionario ampliamente utilizado en datos económicos y financieros.
+
+Presenta tendencias crecientes y decrecientes imprevistas a lo largo del tiempo.
+
+
+---
+# Caminata aleatoria
+
+
+.pull-left[
+Caminata aleatoria simulada:
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-24-1.png" width="50%" style="display: block; margin: auto;" /&gt;&lt;img src="presentacion_files/figure-html/unnamed-chunk-24-2.png" width="50%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+La serie con una diferencia:
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-25-1.png" width="50%" style="display: block; margin: auto;" /&gt;&lt;img src="presentacion_files/figure-html/unnamed-chunk-25-2.png" width="50%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# La función de autocorrelación parcial 
+
+- La autocorrelación parcial (f.a.c.p.) en el rezago `\(h\)` mide el grado de asociación lineal entre `\(Z_t\)` y `\(Z_{t+h}\)` cuando los efectos de los otros rezagos `\(1,2,...,h-1\)` han sido eliminados.
+- Denotemos la función de autocorrelación parcial teórica de orden `\(h\)` por `\(\rho_{hh}\)` para `\(h=1,2,...\)` y la función de autocorrelación parcial muestral de orden `\(h\)` con `\(r_{hh}\)`, para `\(h=1,2,...\)`.
+- Teóricamente la función de autocorrelación parcial de un proceso estacionario `\(Z_t\)`, denotado por `\(\rho_{hh}\)`, para `\(h=1,2,...\)` es 
+`$$\rho_{11}=corr(Z_{t+1},Z_t)=\rho_1$$` 
+`$$\text{y}~~ \rho_{hh}=corr\left[Z_{t+h}-\hat{Z}_{t+h}~,~Z_t-\hat{Z}_{t}\right],~~\text{para}~~ h \geq 2,$$`
+donde   
+`\(\hat{Z}_{t+h}=\beta_1 Z_{t+h-1}+\beta_2 Z_{t+h-2}+...+\beta_{h-1} Z_{t+1}\)` y  
+`\(\hat{Z}_{t}=\beta_1 Z_{t+1}+\beta_2 Z_{t+2}+...+\beta_{h-1} Z_{t+h-1}\)`
+
+
+---
+# La función de autocorrelación parcial
+
+- Si `\(Z_t\)` es un proceso gaussiano,
+
+`$$\rho_{hh}=corr(Z_{t+h},Z_t|Z_{t+1},...,Z_{t+h-1}).$$`
+
+i.e. es la correlación de una distribución normal bivariada `\((Z_{t+h},Z_t)\)` condicional a `\({Z_{t+1},...,Z_{t+h-1}}\)` (¿Por qué?)
+
+
+
+---
+# Próximo tema
+
+### Tema 6: Modelos ARIMA de Box&amp;Jenkins.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

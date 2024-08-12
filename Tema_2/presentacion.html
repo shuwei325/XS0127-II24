@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Tema 2: Método de descomposición de series</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Shu Wei Chou Chen" />
+    <script src="presentacion_files/header-attrs/header-attrs.js"></script>
+    <link href="presentacion_files/remark-css/default.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="text_color.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Tema 2: Método de descomposición de series
+]
+.subtitle[
+## Curso: Análisis de series temporales
+]
+.author[
+### Prof. Shu Wei Chou Chen
+]
+.institute[
+### Escuela de Estadística, UCR.
+]
+
+---
+
+
+
+
+
+
+# Contenido
+
+1. Componentes de las series temporales
+2. Descomposición clásica.
+  - Descomposición aditiva.
+  - Descomposición multiplicativa.
+3. Otras técnicas de descomposición.
+4. Medidas para la precisión de los pronósticos
+
+---
+# Componentes de las series temporales
+
+Existe varios componentes en el comportamiento de series temporales:
+
+  1. **Tendencia:** comportamiento creciente o decreciente en largo plazo. Ej: crecimiento de población, ingresos por ventas.
+  
+  2. **Estacionalidad:** patrón o variaciones afectadas por repetición de una frecuencia dada (ej. semana, mes y año.). Consecuencia de cambios climáticos, comportamiento de la gente en el tiempo. Ej: venta de productos que dependen de la temporada, temperatura, pasajes de avión. 
+
+  3. **Ciclo:** cuando los datos muestran subidas y bajadas de largo plazo, generalmente con frecuencia desconocida. Ej: ciclo económico, período de prosperidad alternando con período de recesión.
+
+  4. **Movimiento irregular o error:** variaciones en la serie que no siguen ningún patrón regular. Es el residuo que queda en una serie después de eliminar los componentes anteriores (tendencia-ciclo y estacionalidad).
+
+---
+# Descomposición de series cronológicas
+
+- Surgió al inicio del siglo XX.
+- Los métodos más antiguos para describir y analizar series cronológicas.
+- Los objetivos  de estos métodos son:
+  1. Eliminar el componente de tendencia en una serie con el fin de estudiar la correlación serial entre las observaciones de la serie. 
+  2. Separar los componentes para describir los diferentes componentes. 
+- Generalmente combinamos el componente de tendencia con el de ciclo y lo llamamos tendencia-ciclo (o simplemente tendencia).
+- En esta presentación, verémos métodos que consisten en descomponer una serie en: 
+  1. tendencia-ciclo, 
+  2. estacionalidad y 
+  3. el componente irregular.
+
+---
+# Modelos de descomposición
+
+
+- **Modelo aditivo**
+
+`$$Z_{t} = T_{t} + S_{t}  + I_t$$`
+
+
+- **Modelo multiplicativo**
+
+`$$Z_{t} = T_{t} \times S_{t} \times I_t.$$`
+donde:&lt;br /&gt;
+`\(Z_t\)`: el valor de la serie `\(Z\)` en el tiempo `\(t\)`, &lt;br /&gt;
+`\(T_t\)`: componente tendencia-ciclo en el tiempo `\(t\)`. &lt;br /&gt;
+`\(S_t\)`: componente estacional en el tiempo `\(t\)`. &lt;br /&gt;
+`\(I_t\)`: componente irregular, aleatorio en el tiempo `\(t\)`.
+
+- La descomposicion aditiva es la más apropiada si la magnitud de las fluctuaciones o la variación alrededor del tendencia-ciclo no varía con el nivel de la serie de tiempo.
+
+---
+# Modelos de descomposición
+
+- La descomposición multiplicativa se usa cuando la variación en el patrón estacional o la variación alrededor de tendencia-ciclo, parece ser proporcional al nivel de la serie de tiempo. Es cómun ver esto en las series del ámbito económico.
+
+- **Observación:** Utilizando la transformación logarítmica en una serie de datos, el modelo multiplicativo se convierte en un modelo aditivo. (Esto equivale a estabilizar la variabilidad a lo largo del tiempo)
+
+$$
+Z_t=T_t \times S_t \times I_t 
+$$
+es equivalente a 
+$$
+\log Z_t = \log T_t + \log S_t + \log I_t.
+$$
+
+
+---
+# Ejemplo: fabricación de equipos eléctricos
+
+- Los datos muestran el número de pedidos de equipos eléctricos (productos informáticos, electrónicos y ópticos) en la zona del euro (16 países). 
+- Los datos han sido ajustados por días hábiles y estandarizados de manera tal que un valor de 100 sea el valor correspondiente al año 2005.
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-2-1.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Ejemplo: fabricación de equipos eléctricos
+
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-3-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+# Ejemplo: fabricación de equipos eléctricos
+
+- Serie ajustada estacionalmente
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-4-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Medias móviles
+
+- El primer paso en una descomposición clásica es utilizar un método de promedio móvil para estimar el ciclo de tendencia.
+
+- Un promedio móvil de orden `\(m\)` se puede escribir como:
+`$$\begin{equation}
+  PM_{t} = \frac{1}{m} \sum_{j=-k}^k Z_{t+j},
+\end{equation}$$`
+
+donde `\(m = 2k+1\)` (impar).
+
+- La estimación de tendencia-ciclo en el momento `\(t\)` se obtiene promediando los valores de la serie temporal dentro de `\(k\)` períodos de `\(t\)`. 
+- El promedio elimina parte de la aleatoriedad de los datos, dejando un componente tendencia-ciclo uniforme, es decir **suaviza** la serie original. A esto se le llama `\(m\)`-**MA**, que significa media móvil de orden `\(m\)`.
+
+
+---
+# Medias móviles
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-5-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Medias móviles
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="presentacion_files/figure-html/ressales3-1.png" alt="Diferentes medias móviles aplicado a los datos de ventas de electricidad residencial" width="60%" /&gt;
+&lt;p class="caption"&gt;Diferentes medias móviles aplicado a los datos de ventas de electricidad residencial&lt;/p&gt;
+&lt;/div&gt;
+
+
+
+
+---
+# Descomposición aditiva
+
+- Suponemos que conocemos el período estacional `\(m\)`. Ej: `\(m=4\)` para datos trimestrales, `\(m=12\)` para datos mensuales, `\(m=7\)` para datos diarios por semana, etc.
+
+**Paso I:**
+
+a. Si `\(m\)` es impar, se calcula el promedio móvil de orden `\(m\)` de la siguiente forma:
+  `$$PM_t=\frac{Z_{t-\frac{(m-1)}{2}}+...+Z_{t}+...+Z_{t+\frac{(m-1)}{2}}}{m}$$`
+  
+---
+# Descomposición aditiva
+  
+b. Si `\(m\)` es par, se debe calcular primero el promedio móvil de orden `\(m\)` correspondiente al periodo `\(t-\frac{1}{2}\)`:
+  `$$PM_{1t}=\frac{Z_{t-\frac{m}{2}}+...+Z_{t}+...+Z_{t+\frac{m}{2}-1}}{m}$$`  
+Luego se calcula el promedio móvil de orden `\(m\)` correspondiente al periodo `\(t+\frac{1}{2}\)`:
+  `$$PM_{2t}=\frac{Z_{t-\frac{m}{2}+1}+...+Z_{t}+...+Z_{t+\frac{m}{2}}}{m}$$`  
+Se calcula un promedio móvil centrado de la siguiente forma:
+`$$PM_t=\frac{PM_{1t}+PM_{2t}}{2}$$`
+
+
+---
+# Descomposición aditiva
+  
+- `\(PM_t\)` es la estimación del componente tendencia-ciclo `\(T_t\)`.
+  
+**Paso II:** Calcule `\(R_t=Z_t -PM_t\)` que es una estimación del componente estacional más el componente irregular, i.e. `\(S_t+I_t\)`.
+
+**Paso III:** Para estimar el componente estacional, agrupar los valores `\(R_t\)`, correspondientes a cada estación `\(m\)` y calcular un promedio para cada estación. De esta forma, obtenemos los **índices estacionales**:
+`$$S^*_j,~~~j=1,...m.$$`
+Se debe ajustar estos índices para que sumen 0, y así se obtienen los **índices estacionales normalizados**. 
+`$$S_j=S^*_j-\bar{S^*}$$`
+Se interpreta que la serie `\(Z\)` es `\(S_j\)` mayor (o menor) que la serie ajustada en el periodo `\(j\)`.
+
+---
+# Descomposición aditiva
+  
+**Paso IV:** &lt;br /&gt;
+Se obtiene la **serie ajustada estacionalmente**, que son los valores desestacionalizados usando `\(d_t=Z_t-S_j\)`.
+
+
+
+**Paso V:** &lt;br /&gt;
+Finalmente, se obtiene el residuo `\(I_t=Z_t-T_t-S_j\)`.
+
+---
+# Descomposición aditiva
+
+Ejemplo 2.1 de Hernández (2011): Serie de número de contrayentes en los matrimonios celebrados en Costa Rica de 1978 a 1983.
+
+.pull-left[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-6-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-7-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+# Descomposición multiplicativa
+
+Para descomponer una serie con el modelo multiplicativo:
+
+**Paso I (igual que la descomposición aditiva):**
+
+a. Si `\(m\)` es impar, se calcula el promedio móvil de orden `\(m\)` de la siguiente forma:
+  `$$PM_t=\frac{Z_{t-\frac{(m-1)}{2}}+...+Z_{t}+...+Z_{t+\frac{(m-1)}{2}}}{m}$$`
+  
+---
+# Descomposición multiplicativa
+  
+b. Si `\(m\)` es par, se debe calcular primero el promedio móvil de orden `\(m\)` correspondiente al periodo `\(t-\frac{1}{2}\)`:
+  `$$PM_{1t}=\frac{Z_{t-\frac{m}{2}}+...+Z_{t}+...+Z_{t+\frac{m}{2}-1}}{m}$$`  
+Luego se calcula el promedio móvil de orden `\(m\)` correspondiente al periodo `\(t+\frac{1}{2}\)`:
+  `$$PM_{2t}=\frac{Z_{t-\frac{m}{2}+1}+...+Z_{t}+...+Z_{t+\frac{m}{2}}}{m}$$`  
+Se calcula un promedio móvil centrado de la siguiente forma:
+`$$PM_t=\frac{PM_{1t}+PM_{2t}}{2}$$`
+
+---
+# Descomposición multiplicativa
+  
+- `\(PM_t\)` es la estimación del componente tendencia-ciclo `\(T_t\)`.
+  
+**Paso II:** Calcule el cociente `\(C_t=\frac{Z_t}{PM_t}\)` que es una estimación del producto del componente estacional y el componente irregular, i.e. `\(S_t \times I_t\)`.
+
+**Paso III:** Para estimar el componente estacional, agrupar los valores `\(C_t\)`, correspondientes a cada estación `\(m\)` y calcular un promedio para cada estación. De esta forma, obtenemos los **índices estacionales**:
+`$$S^*_j,~~~j=1,...m.$$`
+Se debe ajustar estos índices para que su producto sea 1 (media geométrica), y así se obtienen los **índices estacionales normalizados**.
+`$$S_j=\frac{S^*_j}{\bar{S^*_G}}$$`
+
+---
+# Descomposición multiplicativa
+  
+**Paso IV:** &lt;br /&gt;
+Se obtiene la **serie ajustada estacionalmente**, que son los valores desestacionalizados usando `\(d_t=\frac{Z_t}{S_j}\)`.
+
+
+
+**Paso V:** &lt;br /&gt;
+Finalmente, se obtiene el residuo `\(I_t=\frac{Z_t}{T_t S_j}\)`.
+
+---
+# Descomposición multiplicativa
+
+Ejemplo 2.3 de Hernández (2011): serie mensual del número de turistas que ingresaron a Costa Rica de 1991 a 2000.
+
+.pull-left[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-9-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+## Comentarios sobre la descomposición clásica
+
+- La estimación de la tendencia no se puede realizar para las primeras y últimas observaciones.
+- Supone que el componente estacional repite de forma constante (aditiva o multiplicativa) a lo largo del tiempo.
+  - Ej: la demanda eléctrica puede variar el comportamiento con las nuevas tecnologías como el aire acondicionado.
+- La descomposición clásica no es apta para series que presentan variaciones a lo largo del periodo.
+
+---
+# Otras técnicas de descomposición
+
+- Existe una gran variedad de técnicas modificando formas de estimar la tendencia y la estacionalidad. Ej: X11, X11-ARIMA, X12-ARIMA, etc.
+- Utilizan otros criterios como promedio móvil ponderado.
+
+**Descomposición STL:**
+
+- Propuesto por [Cleveland et al. (1990)](https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf)
+- Seasonal and trend descomposition using loess (en inglés).
+- LOESS (locally weighted smoothing), también llamado LOWESS (Locally Weighted Scatterplot Smoothing), es una técnica de regresión no lineal.
+- Localmente ajusta regresión lineal y crea una curva suave en el tiempo para estimar la tendencia.
+- Ventajas:
+  - el componente estacional puede variar en el tiempo.
+  - permite el control del grado de suavizamiento.
+  - es robusto a los outliers.
+  
+---
+# Descomposición STL
+
+.pull-left[
+
+```r
+y.stl1&lt;-stl(y,s.window,t.window=20, s.window="periodic", robust=TRUE)
+plot(y.stl1)
+```
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-10-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+
+```r
+y.stl2&lt;-stl(y,t.window=5, s.window="periodic", robust=TRUE)
+plot(y.stl2)
+```
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-11-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+# Descomposición y pronóstico
+
+- Proyectar al futuro con los componentes individuales de la serie.
+- El componente tendencia-ciclo se estima con una función simple (línea recta, cuadrática, etc.).
+- El componente estacional se estima con el componente estacional del último periodo de los datos.
+- El componente irregular se puede proyectar como 0 (modelo aditivo) y como 1 (modelo multiplicativo), si no está correlacionado (ruido blanco).
+
+
+---
+# Ajuste del modelo
+
+- Sean `\(Z_1,...,Z_T\)` las observaciones y `\(\hat{Z}_1,...,\hat{Z}_T\)` los valores ajustados de un modelo particular.
+
+- Defina el error de pronóstico
+$$
+e_t=Z_t- \hat{Z}_t
+$$
+**Algunas consideraciones:**
+- ¿Son correlacionados?
+- ¿Tienen media cero?
+- ¿Variancia constante?
+- ¿Tienen distribución normal?
+
+
+
+---
+## Medidas para la precisión de los pronósticos
+
+- Dividir las observaciones en `\(Z_1,...,Z_{T-1}\)` y `\(Z_{T}\)`.
+- Ajustar el modelo con `\(Z_1,...,Z_{T-1}\)` y pronosticar el valor de `\(\hat{Z}_{T}\)`.
+- El error de pronóstico es definido por
+$$
+e_T=Z_T- \hat{Z}_T
+$$
+- `\(\hat{Z}_{T}\)` es llamado **pronóstico un paso para adelante**.
+- `\(e_{T}\)` es llamado **error de pronóstico un paso para adelante**.
+
+---
+## Medidas para la precisión de los pronósticos
+
+- Usualmente se divide las observaciones `\(Z_1,...,Z_{T+n}\)` en:
+  - Base de datos de entrenamiento `\(Z_1,...,Z_{T}\)`
+  - Base de datos de prueba `\(Z_{T+1},...,Z_{T+n}\)`
+
+- Ajustar el modelo con `\(Z_1,...,Z_{T}\)` y pronosticar los valores de `\(\hat{Z}_{T+1},...,\hat{Z}_{T+n}\)` (**pronóstico a n paso para adelante**).
+- Definan las siguientes medidas:
+  - Error absoluto medio (mean absolute error, MAE)
+`$$EAM = \frac{\sum\limits_{i=1}^n |e_{T+i}|}{n}$$`
+
+---
+## Medidas para la precisión de los pronósticos
+
+  - Error cuadrático medio (mean squared error, MSE)
+`$$ECM = \frac{\sum\limits_{i=1}^n (e_{T+i})^2}{n}$$`
+
+  - Error porcentual absoluto medio (mean absolute percentage error, MAPE)
+`$$EPAM = \frac{\sum\limits_{i=1}^n |EP_{T+i}|}{n}$$`
+donde `\(EP_{j}=100 \left[ \frac{Z_j-\hat{Z_j}}{Z_j} \right]\)`.
+
+---
+# Segunda parte
+## Laboratorio
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

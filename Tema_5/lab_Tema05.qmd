@@ -1,0 +1,124 @@
+---
+title: "Tema V: Modelos de series temporales"
+subtitle: "Curso: Análisis de series temporales"
+author: 
+  name: "Shu Wei Chou Chen"
+  affiliation: "Escuela de Estadística, UCR"
+format: 
+  html:
+    theme: 
+      light: [sketchy, code_font_light.scss]
+      dark: [sketchy, code_font_dark.scss]
+lang: es
+editor: visual
+toc: true
+toc-depth: 3
+toc-location: left
+toc-title: "Contenido"
+toc-expand: 1
+number-sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 4, fig.height = 4)
+```
+
+# librerías
+
+```{r , message=FALSE , warning=FALSE}
+library(ggplot2)
+library(forecast)
+library(fpp2)
+```
+
+# Ejemplo de ruido blanco
+
+```{r}
+set.seed(1000)
+w = rnorm(500,0,1) 
+ts.plot(w)
+acf(w,lag.max = 50,main="estimación de acf de w")
+```
+
+# Ejemplo de medias móviles
+
+```{r}
+w = rnorm(500,0,1) 
+v = stats::filter(w, sides=2, filter=rep(1/3,3)) # moving average
+v = na.omit(v)
+ts.plot(v)
+acf(v,lag.max = 50,main="estimación de acf de v")
+
+w = rnorm(500,0,1) 
+v = filter(w, sides=2, filter=rep(1/7,7)) # moving average
+v = na.omit(v)
+ts.plot(v)
+acf(v,lag.max = 50,main="estimación de acf de v")
+```
+
+# Ejemplo de pasajeros de aerolínea
+
+```{r}
+data(AirPassengers)
+plot.ts(AirPassengers)
+AP.v1 = stats::filter(AirPassengers, sides=2, filter=rep(1/3,3)) # moving average
+AP.v2 = stats::filter(AirPassengers, sides=2, filter=rep(1/6,6)) # moving average
+AP.v3 = stats::filter(AirPassengers, sides=2, filter=rep(1/12,12)) # moving average
+points(AP.v1,type="l",col=2)
+points(AP.v2,type="l",col=3)
+points(AP.v3,type="l",col=4)
+legend("topleft",legend=c("MA-3","MA-6","MA-12"),
+       col=c(2,3,4),lty=1)
+
+```
+
+# Señal+ruido
+
+```{r}
+cs = 2*cos(2*pi*1:500/50 + .6*pi); w = rnorm(500,0,1)
+par(mfrow=c(3,1), mar=c(3,2,2,1), cex.main=1.5)
+plot.ts(cs, main=expression(2*cos(2*pi*t/50+.6*pi)))
+plot.ts(cs+w, main=expression(2*cos(2*pi*t/50+.6*pi) + N(0,1)))
+plot.ts(cs+5*w, main=expression(2*cos(2*pi*t/50+.6*pi) + N(0,25)))
+```
+
+# Ejemplo de sorteo navideño
+
+```{r,warning=FALSE}
+sorteo<-read.csv("sorteo.csv",sep=",")
+y<-ts(sorteo$numero)
+autoplot(y)
+ggAcf(y,lag.max = 50,main="estimación de acf")
+```
+
+# Ejemplo de graduados de ITCR
+
+```{r}
+itcrgrad<-read.csv("ITCR.csv",sep=",")
+y<-ts(itcrgrad$graduados,start=1975)
+autoplot(y) 
+ggAcf(y)
+w=diff(y)
+autoplot(w) 
+ggAcf(w)
+```
+
+# Ejemplo de turistas
+
+```{r}
+turistas<-read.csv("turistas.csv",sep=";")
+y<-ts(turistas$turistas,start=c(1991,1),frequency=12)
+autoplot(y) 
+ggAcf(y)
+ggAcf(y, lag.max = 50)
+
+w=diff(y)
+autoplot(w) 
+ggAcf(w, lag.max = 50)
+
+autoplot(log(y)) 
+ggAcf(log(y), lag.max = 50)
+logw=diff(log(y))
+autoplot(logw) 
+ggAcf(logw,lag.max=50)
+```

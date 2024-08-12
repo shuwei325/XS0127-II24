@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Tema 8b: Modelos lineales multivariados de series temporales</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Shu Wei Chou Chen" />
+    <script src="presentacion_files/header-attrs/header-attrs.js"></script>
+    <link href="presentacion_files/remark-css/default.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="text_color.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Tema 8b: Modelos lineales multivariados de series temporales
+]
+.subtitle[
+## Curso: Análisis de series temporales
+]
+.author[
+### Prof. Shu Wei Chou Chen
+]
+.institute[
+### Escuela de Estadística, UCR.
+]
+
+---
+
+
+
+
+
+
+
+
+# Contenido
+
+1. Introducción
+2. Medidas de dependencia y estacionariedad conjunta (caso bivariada)
+3. Estimación
+4. Medidas de dependencia y estacionariedad conjunta (caso K-variada)
+5. Modelos autorregresivos multivariados, VAR(p)
+6. ARMAX multivariado
+
+---
+# Introducción 
+
+- En la práctica, es común enfrentar situaciones en donde se presentan varias series temporales.
+
+- Vamos a centrar el caso del análisis multivariada de series temporales estacionarias, con la posibilidad de presentar algún tipo de tendencia determinística.
+
+
+---
+# Introducción 
+
+**Ejemplo 1: El Niño y la población de peces**
+
+- Se tiene la serie ambiental de índice de oscilación del sur (SOI, Southern Oscillation Index), y la serie de número de peces nuevos (Reclutamiento) de 453 meses de 1950 a 1987.
+- SOI mide cambios en presión relacionada a la temperatura del superficie del mar en el oceano pacífico central, el cual se calienta cada 3-7 años por el efecto El Niño.
+
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-2-1.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Introducción 
+
+**Ejemplo 2: Imagen por resonancia magnética**
+
+- Un estímulo fue aplicado a cinco personas en la mano por 32 segundos y luego paró el estímulo por otros 32 segundos, sucesivamente.
+- Durante 256 segundos, cada 2 segundos se registró la intensidad del dependiente del nivel en la sangre (BOLD, blood oxygenation-level dependent signal intensity), la cual mide áreas de activación en el celebro `\((T=128)\)`.
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-3-1.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Medidas de dependencia (caso bivariada)
+
+- Recuerde que **la función de autocorrelación** es definida por
+
+`$$\rho_X(t,s)=\frac{\gamma(t,s)}{\sqrt{\gamma(t,t)\gamma(s,s)}}$$`
+
+- Se puede generalizar estas medidas a dos series `\(X_t\)` y `\(Y_t\)`. Defina:
+
+- **la función de autocovariancia cruzada**:
+
+`$$\gamma_{XY}(t,s)= Cov(X_t,Y_s) =E\left[ (X_t-\mu_{Xt})(Y_s-\mu_{Ys}) \right]$$`
+
+
+- **la función de autocorrelación cruzada**:
+
+`$$\rho_{XY}(t,s)= \frac{\gamma_{XY}(t,s)}{\sqrt{\gamma_{X}(t,t)\gamma_{Y}(s,s)}}$$`
+
+
+
+
+---
+# Estacionariedad conjunta(caso bivariada)
+
+**Definición:**
+Dos series temporales, `\(X_t\)` y `\(Y_t\)` se dicen que son **conjuntamente estacionarias** si cada serie es estacionaria, y la función de covariancia cruzada
+
+`$$\gamma_{XY}(h)= Cov(X_{t+h},Y_t) =E\left[ (X_{t+h}-\mu_{X})(Y_t-\mu_{Y}) \right]$$`
+es una función que solamente depende de `\(h\)`.
+
+De esta forma, podemos definir la función de correlación cruzada de dos series temporales conjuntamente estacionarias por `$$\rho_{XY}(h)=\frac{\gamma_{XY}(h)}{\sqrt{\gamma_X(0)\gamma_Y(0)}}$$`
+
+**Propiedades:**
+- `\(-1 \leq \rho_{XY}(h) \leq 1\)`
+- `\(\rho_{XY}(h) \neq \rho_{XY}(-h)\)` pues `\(Cov(X_2,Y_1)\)` y `\(Cov(X_1,Y_2)\)` no siempre son iguales.
+- `\(\rho_{XY}(h) = \rho_{YX}(-h)\)`
+
+---
+# Estimación
+
+- **la función de autocovariancia cruzada muestral** es definida por
+`$$\hat{\gamma}_{XY}(h)=\frac{1}{T}\sum_{t=1}^{T-h} (X_{t+h}-\bar{X})(Y_{t}-\bar{Y}),$$`
+
+Note que `\(\hat{\gamma}_{XY}(-h)=\hat{\gamma}_{YX}(h)\)` para `\(h=0,1,...,T-1\)`.
+
+
+- **La función de autocorrelación cruzada muestral** es definida por
+`$$\hat{\rho}_{XY}(h)=\frac{\hat{\gamma}_{XY}(h)}{\sqrt{\hat{\gamma}_X(0)\hat{\gamma}_Y(0)}}$$`
+**Propiedad:** La distribución de `\(\hat{\rho}_{XY}(h)\)` para `\(T\)` grande es aproximadamente normal con media cero y 
+`$$\sigma_{\hat{\rho}_{XY}}=\frac{1}{\sqrt{T}}.$$`
+
+
+
+---
+# Ejemplo: El Niño y la población de peces
+
+- Se tiene la serie ambiental de índice de oscilación del sur (SOI, Southern Oscillation Index), y la serie de número de peces nuevos (Reclutamiento) de 453 meses de 1950 a 1987.
+- SOI mide cambios en presión relacionada a la temperatura del superficie del mar en el oceano pacífico central, el cual se calienta cada 3-7 años por el efecto El Niño.
+
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-4-1.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Ejemplo: El Niño y la población de peces
+
+**Gráfico de dispersión de series rezagadas**
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-5-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+# Ejemplo: El Niño y la población de peces
+
+**Gráfico de dispersión de REC contra SOI rezagadas**
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-6-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Ejemplo: El Niño y la población de peces
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-7-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+# Ejemplo: El Niño y la población de peces
+
+
+```r
+par(mfrow=c(2,1))
+ccf2(rec,soi, 36, main="función de correlación cruzada de Rec. contra SOI")
+ccf2(soi,rec, 36, main="función de correlación cruzada de SOI contra Rec.")
+```
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-8-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+# Ejemplo: El Niño y la población de peces
+
+
+```r
+(r1=ccf(rec,soi, 5, plot=FALSE))
+```
+
+```
+## 
+## Autocorrelations of series 'X', by lag
+## 
+## -0.4167 -0.3333 -0.2500 -0.1667 -0.0833  0.0000  0.0833  0.1667  0.2500  0.3333 
+##  -0.259  -0.228  -0.154  -0.086  -0.013   0.025   0.011  -0.042  -0.146  -0.297 
+##  0.4167 
+##  -0.527
+```
+
+```r
+(r2=ccf(soi,rec, 5, plot=FALSE))
+```
+
+```
+## 
+## Autocorrelations of series 'X', by lag
+## 
+## -0.4167 -0.3333 -0.2500 -0.1667 -0.0833  0.0000  0.0833  0.1667  0.2500  0.3333 
+##  -0.527  -0.297  -0.146  -0.042   0.011   0.025  -0.013  -0.086  -0.154  -0.228 
+##  0.4167 
+##  -0.259
+```
+
+- Note que `\(\hat{\rho}_{XY}(h) = \hat{\rho}_{YX}(-h)\)`.
+
+
+---
+# Medidas de dependencia (K-variada)
+
+La generalización a series temporales multivariadas con `\(K\)` componentes, `\(X_{t1},...X_{tK}, t=1,...,T\)`, es intuitivo:
+
+- **la función de autocovariancia cruzada**:
+
+`$$\gamma_{jk}(t,s)= Cov(X_{tj},X_{sk}) =E\left[ (X_{tj}-\mu_{jt})(X_{sk}-\mu_{ks}) \right]$$`
+para `\(j,k=1,...,K.\)`
+
+---
+# Estacionariedad conjunta (K-variada)
+
+- Sea `\(X_t=(X_{t1},...,X_{tK})'\)` un vector `\(K \times 1\)` de series temporales. Se dice que `\(X_t\)` es (débilmente) estacionario si el vector de medias es constante en el tiempo
+`$$\mu=E(X_t)=\left(\begin{array}{c} \mu_1\\ \vdots \\ \mu_K \end{array}\right)$$`
+
+- Y la matriz de autocovariancia depende únicamente del rezago `\(h\)`, i.e.
+`$$\Gamma(h)= E[(X_{t+h}-\mu)(X_{t}-\mu)' ]$$`
+donde los elementos de la matriz son funciones de covariancia cruzada, `\(\gamma_{jk}(h)= Cov(X_{t+h,j},X_{t,k}) =E\left[ (X_{t+h,j}-\mu_{j})(X_{tk}-\mu_{k}) \right]\)` para `\(j,k=1,...,K\)`. 
+
+- Note que como `\(\gamma_{jk}(h)=\gamma_{kj}(-h)\)`, entonces
+
+`$$\Gamma(-h)=\Gamma'(h)$$`
+
+---
+# Estimación
+
+- **la matriz de autocovariancia muestral** es definida por
+`$$\hat{\Gamma}(h)=\frac{1}{T}\sum_{t=1}^{T-h} (X_{t+h}-\bar{X})(X_{t}-\bar{X})',$$`
+donde `\(\bar{X}=\frac{1}{T}\sum_{t=1}^{T} X_{t}\)` es el vector de media muestral.
+
+- Se puede comprobar que:
+
+`$$\hat{\Gamma}(-h)=\hat{\Gamma}(h)'.$$`
+
+---
+# VAR(1)
+### Modelos autorregresivos multivariados
+
+- Es un caso particular de los modelos de series temporales multivariados que supone que la observación de cada variable depende linealmente de los rezagos pasados de ella misma y también de otras variables.
+
+- Para introducir el modelo, vamos a empezar VAR(1) con 3 series: `\(X_{t,1},X_{t,2},X_{t,3}\)`.
+
+- El VAR(1) se define de la siguiente forma:
+
+`$$X_{t,1}=\alpha_1+\Phi_{11}X_{t-1,1}+\Phi_{12}X_{t-1,2}+\Phi_{13}X_{t-1,3}+w_{t,1}$$`
+
+`$$X_{t,2}=\alpha_2+\Phi_{21}X_{t-1,1}+\Phi_{22}X_{t-1,2}+\Phi_{23}X_{t-1,3}+w_{t,2}$$`
+
+`$$X_{t,3}=\alpha_3+\Phi_{31}X_{t-1,1}+\Phi_{32}X_{t-1,2}+\Phi_{33}X_{t-1,3}+w_{t,3}$$`
+- Note que cada ecuación establece un modelo autorregresivo de orden 1 más otras variables de un rezago.
+
+
+
+---
+# VAR(1)
+
+- En concreto, el modelo anterior se puede resumir en
+
+`$$\boldsymbol{X}_{t}=\boldsymbol{\alpha}+\boldsymbol{\Phi}\boldsymbol{X}_{t-1}+\boldsymbol{w}_{t}$$`
+en donde
+
+`$$\boldsymbol{X}_{t}=
+\begin{bmatrix}x_{t,1}\\
+x_{t,2}\\
+x_{t,3}
+\end{bmatrix}~~~~~
+\boldsymbol{\alpha}=
+\begin{bmatrix}\alpha_{1}\\
+\alpha_{2}\\
+\alpha_{3}
+\end{bmatrix}~~~~~
+\boldsymbol{\Phi}=\begin{bmatrix}\Phi_{11} &amp; \Phi_{12} &amp; \Phi_{13} \\
+\Phi_{21} &amp; \Phi_{22} &amp; \Phi_{23}\\
+\Phi_{31} &amp; \Phi_{32} &amp; \Phi_{33}
+\end{bmatrix}~~~~~
+\boldsymbol{w}_{t}=
+\begin{bmatrix}w_{t,1}\\
+w_{t,2}\\
+w_{t,3}
+\end{bmatrix}$$`
+
+
+
+---
+# ARX(1) multivariado
+
+- También es posible extender el modelo anterior con intercepto y tendencia:
+
+`$$\boldsymbol{X}_{t}=\boldsymbol{\Gamma} \boldsymbol{u}_t+\boldsymbol{\Phi}\boldsymbol{X}_{t-1}+\boldsymbol{w}_{t},$$`
+
+`$$\text{donde}~~ \boldsymbol{\Gamma}=\begin{bmatrix}\alpha_{1} &amp; \beta_{1}  \\
+\alpha_{2} &amp; \beta_{2} \\
+\alpha_{3} &amp; \beta_{3}
+\end{bmatrix} ~~\text{y}~~ \boldsymbol{u}_t= \begin{bmatrix}1  \\
+t \end{bmatrix}$$`
+
+- Es decir,
+
+`$$X_{t,1}=\alpha_1 + \beta_1 t+\Phi_{11}X_{t-1,1}+\Phi_{12}X_{t-1,2}+\Phi_{13}X_{t-1,3}+w_{t,1}$$`
+
+`$$X_{t,2}=\alpha_2+ \beta_2 t+\Phi_{21}X_{t-1,1}+\Phi_{22}X_{t-1,2}+\Phi_{23}X_{t-1,3}+w_{t,2}$$`
+
+`$$X_{t,3}=\alpha_3+ \beta_3 t+\Phi_{31}X_{t-1,1}+\Phi_{32}X_{t-1,2}+\Phi_{33}X_{t-1,3}+w_{t,3}$$`
+
+- Note que X en ARX se refiere al vector exógeno denotado por `\(u_t\)` y se puede extender fácilmente incluyendo variable exógenas.
+
+---
+# ARX(p) multivariado
+
+- De esta forma, se puede generalizar a series temporales `\(K\)`-dimensionales y `\(p\)` rezagos:
+
+`$$\boldsymbol{X}_{t}=\boldsymbol{\Gamma} \boldsymbol{u}_t+\boldsymbol{\Phi_1}\boldsymbol{X}_{t-1}+...+\boldsymbol{\Phi_p}\boldsymbol{X}_{t-p}+\boldsymbol{w}_{t}$$`
+en donde
+`$$\boldsymbol{X}_{t}=
+\begin{bmatrix}X_{t,1}\\
+\vdots \\
+X_{t,K}
+\end{bmatrix},~~~\boldsymbol{\Phi}_i=\begin{bmatrix}\Phi_{i,1,1} &amp; \dots &amp; \Phi_{i,1,K} \\
+\vdots &amp; \ddots &amp; \vdots\\
+\Phi_{i,K,1} &amp; \dots &amp; \Phi_{i,K,v}
+\end{bmatrix}~~~~~,i=1,...,p, ~~\text{y}~~~~~$$`
+`$$\boldsymbol{w}_{t}=
+\begin{bmatrix}w_{t,1}\\
+\vdots\\
+w_{t,K}
+\end{bmatrix}$$`
+
+`\(u_t\)` es un vector `\(k \times 1\)` de `\(k\)` variables exógenas y `\(\boldsymbol{\Gamma}\)` es una matriz `\(r \times k\)` de coeficientes asociados a las variables exógenas.
+
+
+---
+# ARX(p) multivariado o VARX(p)
+
+- Considere el modelo en término del polinomio de rezagos: 
+
+`$$A(B) \boldsymbol{X}_{t}=\boldsymbol{\Gamma} \boldsymbol{u}_t+\boldsymbol{w}_{t}$$`
+donde `\(A(B)=I-\boldsymbol{\Phi_1}B-...-\boldsymbol{\Phi_p}B^{p}\)` es el polinomio autoregresivo
+
+- El modelo VARX(p) es estacionario (estable) si
+
+`$$\det(I-\boldsymbol{\Phi_1}z-...-\boldsymbol{\Phi_p}z^{p}) \neq 0 ~~\text{para }|z|\leq 1.$$`
+
+---
+# ARX(p) multivariado o VARX(p)
+
+- En la práctica, se utiliza el hecho de que cualquier VAR(p) se puede representar como un VAR(1) por medio de la matriz compañera A:
+
+`$$\boldsymbol{\xi}_{t}=A\boldsymbol{\xi}_{t-1}+\boldsymbol{v}_{t}$$`
+donde
+`$$\boldsymbol{\xi}_{t (Kp)}=
+\begin{bmatrix}X_{t}\\
+\vdots \\
+X_{t-p+1}
+\end{bmatrix},~~~A=\begin{bmatrix}\Phi_{1} &amp; \Phi_2 &amp; ... &amp; \Phi_{p-1} &amp; \Phi_{p} \\
+I &amp; 0 &amp; ... &amp; 0 &amp; 0 \\
+0 &amp; I &amp; ... &amp; 0 &amp; 0\\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots &amp; \vdots \\
+0 &amp; 0 &amp; ... &amp; I &amp; 0 
+\end{bmatrix}~,~ \boldsymbol{v}_{t}=
+\begin{bmatrix}w_{t}\\
+0 \\
+\vdots\\
+0
+\end{bmatrix}$$`
+y `\(\boldsymbol{\xi}_{t}\)` y `\(\boldsymbol{v}_{t}\)` son vectores `\(Kp \times 1\)`, y `\(A\)` es una matriz `\(Kp \times Kp\)`.
+- Luego, la condición anterior de estacionariedad es equivalente a que todos los eigenvalues de la matriz `\(A\)` tienen módulo menor a 1.
+
+
+---
+# Criterio de información
+
+- Debido a la complejidad de selección del orden `\(p\)`, en la práctica se usan los criterios de información:
+
+**AIC:**
+`$$AIC(p)= \log \det(\tilde{Z}_u(p))+\frac{2}{T}pK^2$$`
+**HQ (Hannan-Quinn):**
+
+`$$HQ(p)= \log \det(\tilde{Z}_u(p))+\frac{2\log(\log(T))}{T}pK^2$$`
+
+donde `\(\tilde{Z}_u(p)=T^{-1}\sum_{t=1}^T \hat{w}_t \hat{w}'_t\)`,  
+`\(p^*\)` es el total de parámetros en cada ecuación y  
+`\(p\)` es el orden de rezago.
+
+---
+# Criterio de información
+
+
+**BIC o criterio de información de Schwarz (SC):**
+`$$SC(p)= \log \det(\tilde{Z}_u(p))+\frac{\log(T)}{T}pK^2$$`
+**FPE (Final Predictor Error):**
+`$$FPE(p)=\left( \frac{T+p^*}{T-p^*}\right)^K \det(\tilde{Z}_u(p))$$`
+
+
+---
+# Diagnósticos
+
+- Pruebas de hipótesis para la correlación serial:
+
+**El estadístico de Portmanteau:**
+`$$Q_h=T \sum_{j=1}^h tr(\hat{C}'_j\hat{C}^{-1}_0\hat{C}_j\hat{C}^{-1}_0)$$`
+donde `\(\hat{C}_i=\frac{1}{T}\sum_{j=i+1}^T \hat{w}_t\hat{w}'_{t-i}\)`. Para `\(T\)` y `\(h\)` suficientemente grandes, el estadístico se aproxima a la distribución `\(\chi^2(K^2(h-n^*))\)`, donde `\(n^*\)` es la cantidad de parámetros excluyendo los de términos determinísticos.
+
+**El estadístico de Portmanteau ajustado (muestras pequeñas):**
+`$$Q^*_h=T^2 \sum_{j=1}^h \frac{1}{T-j} tr(\hat{C}'_j\hat{C}^{-1}_0\hat{C}_j\hat{C}^{-1}_0)$$`
+
+
+---
+# Ejemplo
+
+- 3 series semanales en la zona rural de Los Angeles, EU de 1970 a 1980 `\((T=508)\)`.
+  - promedio semanal de mortalidad cardiovascular.
+  - temperatura (F)
+  - nivel de partícula (contaminación)
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-10-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# ARMAX(p,q) vectorial
+
+- El modelo ARMAX(p,q) `\(r\)`-dimensionales:
+
+`$$\boldsymbol{X}_{t}=\boldsymbol{\Gamma} \boldsymbol{u}_t+ \sum_{i=1}^p \boldsymbol{\Phi_i}\boldsymbol{X}_{t-i}  - \sum_{j=1}^q \boldsymbol{\Theta_j}\boldsymbol{w}_{t-j} +\boldsymbol{w}_{t}$$`
+con `\(\boldsymbol{\Phi_p}, \boldsymbol{\Theta_q} \neq \boldsymbol{0}\)` y `\(\Sigma_\boldsymbol{w}\)` definida positiva.
+- Los coeficientes `\(\boldsymbol{\Phi_i}:i=1,...,p\)`, `\(\boldsymbol{\Theta_j}:j=1,...,q\)` son matrices `\(r \times r\)`
+
+
+---
+# VARMA(p,q)
+
+Para el caso del VARMA(p,q), i.e. tiene media cero, el modelo se especifica de la forma
+
+`$$\boldsymbol{\Phi}(B) \boldsymbol{X}_{t}= \boldsymbol{\Theta}(B) \boldsymbol{w}_{t}$$`
+en donde
+
+`\(\boldsymbol{\Phi}(B)=I- \boldsymbol{\Phi}_1 B-...- \boldsymbol{\Phi}_p B^p\)` es el operador autorregresivo y
+
+`\(\boldsymbol{\Theta}(B)=I- \boldsymbol{\Theta}_1 B-...- \boldsymbol{\Theta}_q B^q\)` es el operador de medias móviles.
+
+- El modelo se dice que es causal (estacionario) si las raíces de `\(|\boldsymbol{\Phi}(B)|\)`, están fuera del círculo unitario.
+- El modelo se dice que es invertible si las raíces de `\(|\boldsymbol{\Theta}(B)|\)`, están fuera del círculo unitario.
+
+---
+# Temas adicionales
+
+- ARFIMA o FARIMA o ARIMA fraccional.
+    - Series temporales con memoria larga.
+- Otras extensiones de ARCH-GARCH.
+- Procesos localmente estacionarios.
+- Procesos cointegrados.
+- Modelos de espacio de estados.
+- Análisis espectral (dominio de frecuencia).
+- y otros.
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

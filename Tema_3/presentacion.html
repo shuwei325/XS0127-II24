@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Tema 3: Técnicas de suavizamiento exponencial</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Shu Wei Chou Chen" />
+    <script src="presentacion_files/header-attrs/header-attrs.js"></script>
+    <link href="presentacion_files/remark-css/default.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="presentacion_files/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="text_color.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Tema 3: Técnicas de suavizamiento exponencial
+]
+.subtitle[
+## Curso: Análisis de series temporales
+]
+.author[
+### Prof. Shu Wei Chou Chen
+]
+.institute[
+### Escuela de Estadística, UCR
+]
+
+---
+
+
+
+
+
+
+
+
+# Contenido
+
+1. Introducción
+2. Suavizamiento exponencial simple
+3. Método lineal de Holt
+4. Métodos multiplicativo y aditivo de Holt-Winters
+5. Representación como modelos Espacio de Estados
+
+---
+# Introducción
+
+- Desarrollados en los años 1950s.
+- Son aplicados ampliamente debido a su sencillez y bajo costo.
+- Pueden ser utilizados para pocas observaciones.
+
+1. Suavizamiento exponencial simple (SES)
+2. Método lineal de Holt (con tendencia)
+3. Métodos multiplicativo y aditivo de Holt-Winters (con estacionalidad)
+
+---
+# Suavizamiento exponencial simple (SES)
+
+- Es apropiada para serie que no tienen patrones estacionales ni de tendencia, y cuya media o nivel cambia lentamente.
+
+- Notación:
+  - `\(Z_t\)`: la observación de la serie en el tiempo `\(t\)`.
+  - `\(P_t\)`: el pronóstico del tiempo `\(t\)`.
+  - `\(Z_t-P_t\)`: el error de pronóstico.
+
+- El método de SES consiste en:
+`$$P_{t+1}=P_t+\alpha (Z_t-P_t)$$`
+donde `\(0&lt;\alpha&lt;1\)` es el parámetro de suavizamiento.&lt;br /&gt;
+i.e., el pronóstico en el tiempo `\(t+1\)` es una combinación del pronóstico en el tiempo `\(t\)` y una proporción `\(\alpha\)` el error de pronóstico del tiempo `\(t\)`.
+
+
+---
+# Suavizamiento exponencial simple (SES)
+
+- Note que la ecuación anterior es equivalente a:
+`$$P_{t+1}=\alpha Z_t + (1-\alpha)~ P_t$$`
+i.e., el pronóstico en el tiempo `\(t+1\)` es un promedio ponderado de la observación más reciente y el pronóstico en el tiempo `\(t\)`.
+
+- Recursivamente se obtienen:
+
+`$$P_{t+1}=\alpha Z_t + (1-\alpha) \left[ \alpha Z_{t-1} + (1-\alpha) P_{t-1} \right]$$`
+`$$=\alpha Z_t + \alpha (1-\alpha) Z_{t-1} + (1-\alpha)^2 P_{t-1}$$`
+`$$=\alpha Z_t + \alpha (1-\alpha) Z_{t-1}+\alpha (1-\alpha)^2 Z_{t-2}+... + \alpha (1-\alpha)^{t-1} Z_1 + (1-\alpha)^t P_{1}$$`
+- Los coeficientes `\(\alpha, \alpha (1-\alpha)^2,..., \alpha (1-\alpha)^t\)` decrecen exponencialmente.
+- El pronóstico `\(P_{t+1}\)` es un promedio ponderado de las observaciones pasadas `\(Z_t,...,Z_1\)` ya que  `\((1-\alpha)^t P_{1}\)` es casi nulo.
+
+---
+# Suavizamiento exponencial simple (SES)
+
+- La idea es realizar SES con diferentes valores de `\(\alpha\)` y seleccionar el valor de `\(\alpha\)` que minimiza la suma de los cuadrados de los errores de pronóstico, o el MSE.
+$$MSE=\frac{\sum\limits_{t=1}^T \left( Z_t-P_t \right)^2}{T} $$
+---
+# Suavizamiento exponencial simple (SES)
+
+- Ejemplo 3.1 de Hernández (2011): Serie mensual de defunciones de Costa Rica de los años 2001 y 2002.
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-2-1.png" width="35%" style="display: block; margin: auto;" /&gt;
+
+- Vamos al excel y el laboratorio.
+
+- Consideraciones importantes.
+  - Selección de los valores iniciales.
+
+
+---
+# El método lineal de Holt
+
+- El método de Holt sirve para series con tendencia.
+- El suavizamiento exponencial de Holt utiliza 3 ecuaciones y dos parámetros ( `\(\alpha\)` y `\(\beta\)` ):
+
+Ecuación del nivel: `\(~~~~~~~~~~~~~l_{t}=\alpha Z_{t} + (1-\alpha)~ (l_{t-1}+b_{t-1})\)`
+
+Ecuación de la pendiente: `\(~~~~b_{t}=\beta (l_t-l_{t-1}) + (1-\beta)~ b_{t-1}\)`
+
+Ecuación del pronóstico: `\(~~~~~P_{t+m}=l_t+b_t m\)`
+- `\(l_t\)` es una estimación del nivel promedio de `\(Z_t\)`
+  - es un promedio ponderado del valor de `\(Z_t\)` y una estimación del nivel de la serie en `\(t\)`.
+- `\(b_t\)` es una estimación de la pendiente de `\(Z_t\)`.
+  - es un promedio ponderado del aumento del nivel de la serie entre `\(t\)` y `\(t-1\)`, y una estimación de la pendiente en el tiempo `\(t-1\)`.
+- La última ecuación pronostica el valor de `\(Z_{t+m}\)`, i.e., pronóstico a `\(m\)` paso para adelante.
+
+- Es conocido como **suavizamiento exponencial doble**.
+
+---
+# El método lineal de Holt
+
+- Al igual que SES, los valores de `\(\alpha\)` y `\(\beta\)` se obtienen minimizando la suma de los cuadrados de los errores de pronóstico, o el MSE.
+$$MSE=\frac{\sum\limits_{i=1}^T \left( Z_t-P_t \right)^2}{T} $$
+
+---
+# El método lineal de Holt
+
+- Ejemplo 3.2 de Hernández (2011): Serie de graduados del ITCR de 1975-2002.
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-3-1.png" width="35%" style="display: block; margin: auto;" /&gt;
+
+
+- Vamos al excel y el laboratorio.
+
+- Consideraciones importantes.
+  - Selección de los valores iniciales.
+  
+---
+# El método lineal de Holt amortiguada
+
+**Crítica:** 
+- el método lineal de Holt supone una tendencia constante a futuro.
+- Pronósticos a largo plazo no son prácticos. 
+- [Gardner &amp; McKenzie (1985)](https://doi.org/10.1287/mnsc.31.10.1237) introdujo un parámetro adicional para amortiguar esa tendencia constante.
+
+Ecuación del nivel: `\(~~~~~~~~~~~~~l_{t}=\alpha Z_{t} + (1-\alpha)~ (l_{t-1}+\phi b_{t-1})\)`
+
+Ecuación de la pendiente: `\(~~~~b_{t}=\beta (l_t-l_{t-1}) + (1-\beta)~ \phi b_{t-1}\)`
+
+Ecuación del pronóstico: `\(~~~~~P_{t+m}=l_t+ (\phi+\phi^2+...+\phi^m)~b_t\)`
+
+- Si `\(\phi=1\)`, se tiene el método lineal de Holt.
+- Para `\(0&lt;\phi&lt;1\)`, el pronóstico converge a `\(l_t+ \frac{\phi}{1-\phi}~b_t\)`, cuando `\(m \rightarrow \infty\)`.
+- Es decir, el pronóstico a corto plazo es con tendencia pero a largo plazo es constante.
+
+---
+# El método lineal de Holt amortiguada
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-4-1.png" width="600px" height="400px" style="display: block; margin: auto;" /&gt;
+
+---
+# El método mult. y adit. de Holt-Winters
+
+- [Winters (1960)](https://pubsonline.informs.org/doi/abs/10.1287/mnsc.6.3.324) extendió el método lineal de Holt para tomar en cuenta la estacionalidad, el cual es conocido como Holt-Winters.
+
+1. Método multiplicativo
+  - Variación estacional cambia proporcionalmente con el nivel de la serie.
+
+2. Método aditivo
+  - Variación constante a lo largo de tiempo.
+
+---
+# El método mult. de Holt-Winters
+
+
+`$$l_t= \alpha \frac{Z_t}{S_{t-s}}+(1-\alpha) (l_{t-1}+b_{t-1})$$`
+`$$b_t= \beta (l_t-l_{t-1})+(1-\beta) b_{t-1}$$`
+`$$S_t= \gamma \frac{Z_t}{l_{t-1}+b_{t-1}}+(1-\gamma) S_{t-s}$$`
+`$$P_{t+m}= (l_{t}+b_t~m) S_{t+m-s}$$`
+donde &lt;br /&gt; 
+`\(s\)` es la longitud de la estacionalidad, &lt;br /&gt; `\(l_t\)` es el nivel de la serie `\(Z_t\)`, &lt;br /&gt; `\(b_t\)` es la tendencia, &lt;br /&gt; `\(S_t\)` es el componente estacional, &lt;br /&gt; `\(P_{t+m}\)` es el pronóstico `\(m\)` pasos adelante y &lt;br /&gt; `\(0&lt;\alpha&lt;1\)`, `\(0&lt;\beta&lt;1\)`, `\(0&lt;\gamma&lt;1\)`.
+
+---
+# El método mult. de Holt-Winters
+
+**Valores iniciales:** para `\(s\)` periodos,&lt;br /&gt;
+- El nivel `\(l_t\)` se inicia con:
+`$$l_s=\frac{Z_1+...+Z_s}{s}$$`
+como un promedio de los datos de los primeros `\(s\)` datos.
+
+- La pendiente `\(b_t\)` se inicia con:
+`$$b_s=\frac{1}{s}\left[ \frac{Z_{s+1}-Z_1}{s}+\frac{Z_{s+2}-Z_2}{s}+...+\frac{Z_{s+s}-Z_s}{s}   \right]$$`
+`$$=\frac{1}{s}\left[ \frac{Z_{s+1}+...+Z_{s+s}}{s}-\frac{Z_{1}+...+Z_{s}}{s} \right]$$`
+como un promedio de pendientes de cada periodo en los primeros `\(2s\)` periodos.
+
+---
+# El método mult. de Holt-Winters
+
+- Los índices estacionales se inicializan como cociente de los primeros `\(s\)` valores al promedio de los primeros `\(s\)` datos.
+`$$S_i=\frac{Z_i}{l_s}, \text{ para } i=1,...,s$$`
+
+- Ejemplo 3.3 de Hernández (2011): Serie mensual de turistas de 1991-2000.
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-5-1.png" width="35%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# El método mult. de Holt-Winters
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-6-1.png" width="600px" height="400px" style="display: block; margin: auto;" /&gt;
+
+
+---
+# El método aditivo de Holt-Winters
+
+
+`$$l_t= \alpha (Z_t-S_{t-s})+(1-\alpha) (l_{t-1}+b_{t-1})$$`
+`$$b_t= \beta (l_t-l_{t-1})+(1-\beta) b_{t-1}$$`
+`$$S_t= \gamma \left( Z_t-l_{t-1}-b_{t-1} \right)+(1-\gamma) S_{t-s}$$`
+`$$P_{t+m}= l_{t}+b_t~m + S_{t+m-s}$$`
+donde &lt;br /&gt; 
+`\(s\)` es la longitud de la estacionalidad, &lt;br /&gt; `\(l_t\)` es el nivel de la serie `\(Z_t\)`, &lt;br /&gt; `\(b_t\)` es la tendencia, &lt;br /&gt; `\(S_t\)` es el componente estacional, &lt;br /&gt; `\(P_{t+m}\)` es el pronóstico `\(m\)` pasos adelante y &lt;br /&gt; `\(0&lt;\alpha&lt;1\)`, `\(0&lt;\beta&lt;1\)`, `\(0&lt;\gamma&lt;1\)`.
+
+---
+# El método aditivo de Holt-Winters
+
+- Los índices estacionales se inicializan como cociente de los primeros `\(s\)` valores al promedio de los primeros `\(s\)` datos.
+`$$S_i=Z_i-a_s, \text{ para } i=1,...,s$$`
+
+- Existen otras inicializaciones como el procedimiento basado en regresión (Bowerman, O’Connell and Koehler, 2005).
+  - asumir tendencia lineal de las primeras observaciones (típicamente 3 o 4 años), y usa el intercepto como `\(l_0\)` y pendiente como `\(b_0\)`.
+- Hasta los últimos años siguen proponiendo nuevos métodos.
+
+
+---
+# El método aditivo y mult. de H-W
+
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-7-1.png" width="500px" height="300px" style="display: block; margin: auto;" /&gt;
+
+
+RMSE del método multiplicativo: 3239.92.  
+RMSE del método aditivo: 4297.824.   
+
+
+---
+# El método mult. de H-W amortiguado
+
+`$$l_t= \alpha \frac{Z_t}{S_{t-s}}+(1-\alpha) (l_{t-1}+\phi~b_{t-1})$$`
+`$$b_t= \beta (l_t-l_{t-1})+(1-\beta)~\phi~ b_{t-1}$$`
+`$$S_t= \gamma \frac{Z_t}{l_{t-1}+\phi~b_{t-1}}+(1-\gamma) S_{t-s}$$`
+`$$P_{t+m}= (l_{t}+(\phi+\phi^2+...+\phi^m)~ b_t) S_{t+m-s}$$`
+
+---
+# El método mult. de H-W amortiguado
+
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-8-1.png" width="500px" height="300px" style="display: block; margin: auto;" /&gt;
+
+
+---
+## Representación como modelos Espacio de Estados
+
+Note que la ecuación del SES:
+`$$P_{t+1}=\alpha Z_t + (1-\alpha)~ P_t$$`
+se puede reescribir como:  
+- La ecuación del pronóstico:  `\(~~~~~~P_{t+1}=l_t\)`  
+- La ecuación del suavizamiento: `\(~~l_t=\alpha Z_t + (1-\alpha)~ P_t\)`  
+`\(~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~= \alpha Z_t + (1-\alpha)~ l_{t-1}\)`  
+
+Arreglando la ecuación del suavizamiento:  
+`\(~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~l_t = l_{t-1} + \alpha (Z_t-l_{t-1})\)`   
+`\(~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~= l_{t-1}+ \alpha e_t\)`  
+donde  
+`\(e_t = Z_t - l_{t-1} = Z_t - P_{t}\)` es el error.
+
+
+---
+## Representación como modelos Espacio de Estados
+
+Finalmente, la representación del modelo Espacio de Estados se escribe de la siguiente forma: 
+`$$Z_t = l_{t-1}+e_t$$`
+`$$l_t = l_{t-1} + \alpha e_t$$`
+Asumiendo alguna distribución de `\(e_t\)`, se puede realizar inferencias a los parámetros y los pronósticos con intervalo de confianza.
+
+---
+## Representación como modelos Espacio de Estados
+
+Ejemplo con Holt-Winter Multiplicativo.
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-9-1.png" width="350px" height="350px" style="display: block; margin: auto;" /&gt;
+
+---
+## Representación como modelos Espacio de Estados
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-10-1.png" width="400px" height="400px" style="display: block; margin: auto;" /&gt;
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

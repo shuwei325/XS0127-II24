@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Tema 6: Modelos ARIMA de Box&amp;Jenkins - Parte 3</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Shu Wei Chou Chen" />
+    <script src="presentacion3_files/header-attrs/header-attrs.js"></script>
+    <link href="presentacion3_files/remark-css/default.css" rel="stylesheet" />
+    <link href="presentacion3_files/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="presentacion3_files/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="presentacion3_files/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="text_color.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Tema 6: Modelos ARIMA de Box&amp;Jenkins - Parte 3
+]
+.subtitle[
+## Curso: Análisis de series temporales
+]
+.author[
+### Prof. Shu Wei Chou Chen
+]
+.institute[
+### Escuela de Estadística, UCR
+]
+
+---
+
+
+
+
+
+
+
+# Contenido
+
+1. Introducción
+2. Identificación
+3. Estimación
+4. Chequeo o diagnóstico
+5. El contraste de raíz unitaria
+
+
+---
+# Introducción 
+
+- El enfoque de Box-Jenkins es adecuado para series estacionarias ya que requiere estimar la f.a.c. y f.a.c.p.
+
+- En la práctica, las series no estacionarias se pueden realizar transformaciones apropiadas en series estacionarias.
+  - Transformación logarítmica y diferenciación.
+  - El uso de algún método para eliminar la tendencia.
+
+- El enfoque de B&amp;J consiste en 3 etapas:
+1. Identificación.
+2. Estimación.
+3. Chequeo.
+
+---
+# 1. Identificación
+
+- Asegúrese que la serie es estacionaria.
+
+- Si no es estacionaria, realice una transformación apropiada para que sea estacionaria.
+- Se trata de calcular las f.a.c. y f.a.c.p. muestrales y analizarlas para encontrar uno o varios modelos ARIMA que sean apropiados para describir los datos.
+
+- Box &amp; Jenkins (1976) recomiendan examinar un número de rezagos de las f.a.c. y f.a.c.p. a lo más igual a `\(1/4\)` de las observaciones de la serie.
+
+- Si la media es estacionaria (constante), la f.a.c. estimada debe caer rápidamente a cero.
+
+- Si la media no es estacionaria (no es constante), la f.a.c. estimada cae lentamente a cero.
+
+- Aunque en la práctica los modelos AR(1), AR(2), MA(1), MA(2) y ARMA(1,1) ocurren muy frecuentemente, en muchas ocaciones la etapa de identificación puede ser difícil debido a una gran variedad de modelos que existen.
+
+---
+# 1. Identificación
+
+- Bajo `\(H_0: \rho_k=0\)`, `\(r_k\)` se distribuye aproximadamente normal con media 0 y error estándar 
+`$$e.e.(r_k) \cong \left( \frac{1+2\sum\limits_{j=1}^{k-1}r_j^2}{T} \right)^{1/2},$$`
+suponiendo que las series son estacionarias con ruido blanco gaussiano `\(a_t\)`, cuyo verdadero orden MA es `\(k-1\)`.
+
+- De esta forma, se puede plantear el contraste:
+`\(H_0: \rho_k=0\)` para `\(k=1,2,3,...\)` con el estadístico t:
+`$$t=\frac{r_k-0}{e.e.(r_k)}$$`
+---
+# 1. Identificación
+
+- Para el caso del f.a.c.p. muestral `\(r_{kk}\)`, éste se distribuye aproximadamente normal para `\(T\)` grande, con media 0 y error estándar:
+`$$e.e.(r_{kk})=\frac{1}{\sqrt{T}}.$$`
+- En los paquetes estadísticos generalmente ya proporcionan los correlogramas con las bandas de confianza alrededor de cero con `\(\pm 2\)` errores estándares.
+
+---
+# 2. Estimación
+
+- Después de la identificación de uno o varios modelos ARMA, el siguiente paso es la estimación de los parámetros.
+
+- Existe una variedad de métodos de estimación como:
+  - métodos de momentos
+  - máxima verosimilitud
+  - mínimos cuadrados
+
+- El método de estimación más utilizado es la estimación por máxima verosimilitud.
+
+- Dada una serie observada, la idea es maximizar los valores de `\(\phi_i\)` y `\(\theta_j\)` del modelo identificado.
+
+- Después de estimar los parámetros del modelo ARIMA, es necesario chequear:
+  - las condiciones de estacionariedad y de invertibilidad,
+  - la significancia de los coeficientes estimados.
+
+---
+# Estimación por máxima verosimilitud
+
+**función de verosimilitud condicional:**
+- Bajo el supuesto de que `\(a_t\)` son ruidos blancos gaussianos, tenemos que la función de densidad conjunta de `\(a_1,...,a_T\)` es
+`$$f(a_1,...,a_T)=(2 \pi)^{-n/2}(\sigma_a)^{-n} \exp \left\lbrace -\sum\limits_{t=1}^T \frac{a_t^2}{2 \sigma_a^2} \right\rbrace$$`
+- Para el caso de AR(1),
+`$$a_t=Z_t-C-\phi_1 Z_{t-1},~~\text{para}~~ t=1,...,T,$$`
+se tiene que
+
+`$$L(C,\phi_1,\sigma_a^2|Z_1,...,Z_T)=(2 \pi)^{-n/2}(\sigma_a)^{-n} \exp \left\lbrace -\sum\limits_{t=1}^T \frac{(Z_t-C-\phi_1 Z_{t-1})^2}{2 \sigma_a^2} \right\rbrace.$$`
+
+---
+# Estimación por máxima verosimilitud
+
+- Luego, la función log-verosimilitud es definida como
+`$$l(C,\phi_1,\sigma_a^2|Z_1,...,Z_T)\propto -n \log(\sigma_a)  -\left\lbrace \sum\limits_{t=1}^T \frac{(Z_t-C-\phi_1 Z_{t-1})^2}{2 \sigma_a^2} \right\rbrace.$$`
+- La idea es maximizar `\(l(C,\phi_1,\sigma_a^2|Z_1,...,Z_T)\)`.
+
+
+---
+# Estimación por máxima verosimilitud
+
+- De manera general, después de hacer `\(d\)` diferencias, el modelo ARMA resultante es estacionario e invertible y se puede escribir como
+`$$a_t=Z_t-C-\phi_1 Z_{t-1}-\phi_2 Z_{t-2}-...-\phi_p Z_{t-p}$$`
+`$$+\theta_1 a_{t-1}+\theta_2 a_{t-2}+...+\theta_q a_{t-q}$$`
+Su función de log-verosimilitud es:
+`$$l(\boldsymbol{\theta}|Z_1,...,Z_T)\propto -n \log\sigma_a -\frac{S(\boldsymbol{\theta},\boldsymbol{Z},\boldsymbol{a})}{2 \sigma_a^2},$$`
+donde&lt;br /&gt; 
+`\(\boldsymbol{\theta}=(C,\phi_1,...,\phi_p,\theta_1,...,\theta_q,\sigma_a^2)\)`&lt;br /&gt; `\(S(\boldsymbol{\theta},\boldsymbol{Z},\boldsymbol{a})=\sum\limits_{t=1}^T a_t^2(\boldsymbol{\theta},\boldsymbol{Z},\boldsymbol{a})\)` (suma de cuadrados condicional)
+
+- El procedimiento de maximizar `\(l(\boldsymbol{\theta}|Z_1,...,Z_T)\)` usa algún método de optimización.
+
+---
+# Estimación por máxima verosimilitud
+
+**función de verosimilitud no condicional:**
+
+- Bajo el supuesto de normalidad, el modelo ARMA tiene su media y matriz de autocovariancia teórica definida y su función de log-verosimilitud es:
+`$$l(\boldsymbol{\theta}|Z_1,...,Z_T) \cong -n \log\sigma_a -\frac{S(\boldsymbol{\theta},\boldsymbol{Z})}{2 \sigma_a^2},$$`
+donde&lt;br /&gt; 
+`\(\boldsymbol{\theta}=(C,\phi_1,...,\phi_p,\theta_1,...,\theta_q,\sigma_a^2)\)`&lt;br /&gt; `\(S(\boldsymbol{\theta},\boldsymbol{Z})=\sum\limits_{t=1}^T a_t^2(\boldsymbol{\theta},\boldsymbol{Z})\)` (suma de cuadrados no condicional)
+
+
+---
+# Diagnóstico de modelos ARIMA
+
+- Después de identificar uno o varios modelos de candidato y estimar los parámetros de los modelos, se debe continuar con el diagnóstico de estos modelos.
+
+- El objetivo es verificar si el modelo estimado es adecuado para la serie analizada.
+
+- El supuesto más importante es que los residuos no esten correlacionados.
+
+- El chequeo inicial se realiza examinando el correlograma de los residuos `\(\hat{a}_t\)`.
+
+- En la práctica Pankratz (1983) sugiere que:
+  - Para los rezagos 1, 2 y 3: el valor absoluto del estadístico t sea menor que 1.25.
+  - Para los rezagos mayores que 3: el valor absoluto del estadístico t sea menor que 1.6.
+  - Estos valores son llamados **valores de alerta**.
+
+---
+# Diagnóstico de modelos ARIMA
+
+- Note que si algún valor t de una f.a.c. residual es mayor que los valores críticos, se rechaza la `\(H_0\)` de que `\(\rho_k=0\)`. Por lo que se concluye que los `\(a_t\)` no es ruido blanco.
+
+- La presencia de autocorrelaciones en los residuos `\(a_t\)` implica que hay algún patrón temporal en la serie `\(Z_t\)` que no ha sido modelizado con el ARIMA.
+
+- Si este es el caso, se debe identificar un nuevo modelo re-examinando la f.a.c. y la f.a.c.p. de la serie `\(Z_t\)`, y repetir las etapas de estimación y verificación.
+
+- El proceso termina hasta llegar a un modelo con residuos no autocorrelacionados.
+  
+---
+# Diagnóstico de modelos ARIMA
+
+- Note que el procedimiento anterior se trata de realizar contrastes de hipótesis por separado para cada rezago `\(k\)`.
+
+- Se puede realizar **el contraste Q de Ljung-Box**:
+`$$H_0: \rho_1(a)=\rho_2(a)=...=\rho_K(a)=0$$`
+con la estadística:
+`$$Q=T(T+2) \sum\limits_{k=1}^K \frac{1}{T-k} r_k^2(\hat{a}).$$`
+Bajo `\(H_0\)`, `\(Q\)` se distribuye aproximadamente como `\(\chi_{K-m}^2\)` donde `\(m\)` es el número de parámetros estimados en el modelo ARIMA.
+
+- Para `\(Q\)` grande, significa que las primeras `\(K\)` autocorrelaciones residuales son significativamente diferentes que cero. Si este es el caso, se debe volver a la etapa de identificación de un nuevo modelo.
+
+
+---
+## Otras formas para identificación de modelos
+
+**Función penalizadora:**
+
+La idea es escoger los órdenes de `\(p\)` y `\(q\)` que minimiza la medida
+`$$P(p,q)=\ln \hat{\sigma}_{p,q}^2+(p+q) \frac{C(T)}{T}$$`
+donde &lt;br /&gt; 
+`\(\hat{\sigma}_{p,q}^2\)` es la estimación de la variancia residual,  &lt;br /&gt; 
+`\((p+q) \frac{C(T)}{T}\)` es el término penalizador, que aumenta si la cantidad de parámetros aumenta, y `\(C(T)\)` es una función que depende del tamaño de serie.
+
+
+---
+## Otras formas para identificación de modelos
+
+- Criterio de información de Akaike `\((AIC)\)`:
+
+`$$AIC= -2 \ln L + 2 (p+q+k+1)$$`
+donde &lt;br /&gt; 
+`\(L\)` es la verosimilitud, &lt;br /&gt; 
+`\(k=1\)` si `\(C \neq 0\)` y `\(k=0\)` si `\(C = 0\)` 
+
+Note que `\((p+q+k+1)\)` es la cantidad de parámetros estimados.
+
+- `\(AIC_c\)`:
+
+`$$AIC_c= AIC + \frac{2(p+q+k+1)(p+q+k+2)}{T-p-q-k-2}$$`
+
+---
+## Otras formas para identificación de modelos
+
+- Criterio de información Bayesiana `\((BIC)\)`:
+`$$BIC= AIC + (\log T - 2) (p+q+k+1)$$`
+
+---
+# El contraste de raíz unitaria
+
+- Considere el modelo AR(1):
+
+`$$Z_t=\phi_1 Z_{t-1}+a_t$$`
+Si se toma una diferencia:
+
+`$$W_t=Z_t-Z_{t-1}=\phi_1 Z_{t-1}+a_t-Z_{t-1}=(\phi_1-1) Z_{t-1}+a_t=\phi^* Z_{t-1}+a_t$$`
+
+Se puede obtener el estimador del mínimo cuadrado de `\(\hat{\phi}^*\)` mediante una regresión ordinaria de `\(W_t\)` sobre `\(Z_{t-1}\)`. 
+Por lo tanto, el contraste para la estacionariedad se puede formular mediante las siguientes hipótesis:
+`$$H_0: \phi_1=1 ~~\text{v.s.}~~ H_1: \phi_1&lt;1$$`
+o equivalentemente a:
+`$$H_0: \phi^*=0 ~~\text{v.s.}~~ H_1: \phi^*&lt;0$$`
+
+
+
+---
+# El contraste de raíz unitaria
+
+- El contraste se puede realizar mediante la estadística `\(\hat{\tau}\)` de Dickey-Fuller:
+
+`$$\hat{\tau}=\frac{\hat{\phi}^*}{e.e.(\hat{\phi}^*)}.$$`
+- La distribución de `\(\hat{\tau}\)` no es conocida y se obtiene los percentiles y los valores críticos de la distribución de `\(\hat{\tau}\)` por medio de simulaciones.
+- Si se rechaza la `\(H_0\)`, la serie es estacionaria.
+- Si no se rechaza la `\(H_0\)`, la serie es no estacionaria, y se tiene que:
+`$$Z_t-Z_{t-1}=a_t,$$`
+la cual es denominada **camino aleatorio**.
+
+---
+# El contraste de raíz unitaria
+
+- Este contraste se puede generalizar al contraste de Dickey-Fuller modificado.
+- En este caso, se agrega los términos rezagados de `\(W_t\)` en la regresión:
+
+`$$W_t=C_0+C_1 t+ \phi^* Z_{t-1}+D_1 W_{t-1}+D_2 W_{t-2}+...+D_p W_{t-p}+a_t$$`
+
+
+- Si la serie `\(Z_t\)` es no es estacionaria y necesita realizar una diferencia, `\(\phi^* \approx 0\)`.
+- Si la serie `\(Z_t\)` es estacionaria, `\(\phi^* &lt; 0\)`.
+
+---
+## Algunas consideraciones después de obtener un modelo ARIMA
+
+- Modelo parsimonioso.
+- Estacionariedad.
+- Invertibilidad.
+- Buena calidad de los coeficientes estimados.
+- Residuos independientes.
+- Buen ajuste de los datos.
+- Pronóstico satisfactorio.
+
+
+
+---
+# Próximo tema
+
+### Modelos ARIMA de Box&amp;Jenkins - Parte 4
+### Modelos ARIMA estacionales.
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
