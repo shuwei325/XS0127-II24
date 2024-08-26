@@ -203,13 +203,26 @@ accuracy(ht3)
 # ETS como modelo Espacio de Estados
 
 ```{r}
-fit4 <- ets(y)
-summary(fit4)
-autoplot(fit4)
 
-plot(forecast(fit4))
+hw_ad<-ets(y,model="AAA",damped = FALSE)
+hw_ad_a<-ets(y,model="AAA",damped = TRUE)
+hw_mul<-ets(y,model="MAM",damped = FALSE)
+hw_mul_a<-ets(y,model="MAM",damped = TRUE)
+hw_auto<-ets(y,model="ZZZ") #selecciona el mejor modelo usando AIC.
 
-fit4 %>% forecast(h=12) %>%
+accuracy(hw_ad)
+accuracy(hw_ad_a)
+accuracy(hw_mul)
+accuracy(hw_mul_a)
+accuracy(hw_auto)
+
+hw_auto <- ets(y)
+summary(hw_auto)
+autoplot(hw_auto)
+
+plot(forecast(hw_auto))
+
+hw_auto %>% forecast(h=12) %>%
   autoplot() +
   ylab("Turistas")
 ```

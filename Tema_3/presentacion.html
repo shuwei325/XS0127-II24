@@ -56,6 +56,7 @@ class: center, middle, inverse, title-slide
 2. Método lineal de Holt (con tendencia)
 3. Métodos multiplicativo y aditivo de Holt-Winters (con estacionalidad)
 
+
 ---
 # Suavizamiento exponencial simple (SES)
 
@@ -144,7 +145,7 @@ $$MSE=\frac{\sum\limits_{i=1}^T \left( Z_t-P_t \right)^2}{T} $$
   - Selección de los valores iniciales.
   
 ---
-# El método lineal de Holt amortiguada
+# El método lineal de Holt amortiguado
 
 **Crítica:** 
 - el método lineal de Holt supone una tendencia constante a futuro.
@@ -162,7 +163,7 @@ Ecuación del pronóstico: `\(~~~~~P_{t+m}=l_t+ (\phi+\phi^2+...+\phi^m)~b_t\)`
 - Es decir, el pronóstico a corto plazo es con tendencia pero a largo plazo es constante.
 
 ---
-# El método lineal de Holt amortiguada
+# El método lineal de Holt amortiguado
 
 &lt;img src="presentacion_files/figure-html/unnamed-chunk-4-1.png" width="600px" height="400px" style="display: block; margin: auto;" /&gt;
 
@@ -265,9 +266,60 @@ RMSE del método aditivo: 4297.824.
 
 &lt;img src="presentacion_files/figure-html/unnamed-chunk-8-1.png" width="500px" height="300px" style="display: block; margin: auto;" /&gt;
 
+---
+# Taxonomía de métodos SE
+
+|  Tendencia              |           |     Componente   estacional   |                      |
+|-------------------------|:---------:|:-----------------------------:|:--------------------:|
+|                         | N (No)    | A (Aditivo)                   | M   (Multiplicativo) |
+| N (No)                  | `\((N,N)\)`   | `\((N,A)\)`                       | `\((N,M)\)`              |
+| A (Aditivo)             | `\((A,N)\)`   | `\((A,A)\)`                       | `\((A,M)\)`              |
+| M (Multiplicativo)      | `\((A_d,N)\)` | `\((A_d,A)\)`                     | `\((A_d,M)\)`            |
+
+Note que algunos de estos ya lo acabamos de ver:
+
+- `\((N,N)\)`:	SES
+- `\((A,N)\)`:	Método lineal de Holt
+- `\((A_d,N)\)`:	Holt amortiguado
+- `\((A,A)\)`:	HW aditivo
+- `\((A,M)\)`:	H-W Multiplicativo
+- `\((A_d,M)\)`:	H-W multiplicativo amortiguado
 
 ---
-## Representación como modelos Espacio de Estados
+
+- En `R`, especifica el tipo de error como "aditivo" o "multiplicativo", y se usa la notación del modelo ETS como `(ZZZ)`, donde las 3 `Z`s representan:
+
+  - El error ("A", "M", "Z"), 
+  - La tendencia ("N","A","M" or "Z"), y 
+  - El componente estacional ("N","A","M" or "Z").
+  - `\(N:\)` no, `\(A:\)` aditivo, `\(M:\)` multiplicativo y `\(Z:\)` automático.
+
+---
+
+- Por ejemplo, si necesito estimar  
+
+```r
+turistas&lt;-read.csv("turistas.csv",sep=";")
+y&lt;-ts(turistas$turistas,start=c(1991,1),frequency=12)
+hw_ad&lt;-ets(y,model="AAA",damped = FALSE)
+hw_ad_a&lt;-ets(y,model="AAA",damped = TRUE)
+hw_mul&lt;-ets(y,model="MAM",damped = FALSE)
+hw_mul_a&lt;-ets(y,model="MAM",damped = TRUE)
+hw_auto&lt;-ets(y,model="ZZZ") #selecciona el mejor modelo usando AIC.
+```
+
+---
+
+
+```r
+plot(hw_auto)
+```
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-10-1.png" width="500px" height="500px" style="display: block; margin: auto;" /&gt;
+
+---
+# Representación de SE 
+## como modelos Espacio de Estados
 
 Note que la ecuación del SES:
 `$$P_{t+1}=\alpha Z_t + (1-\alpha)~ P_t$$`
@@ -284,7 +336,6 @@ donde
 
 
 ---
-## Representación como modelos Espacio de Estados
 
 Finalmente, la representación del modelo Espacio de Estados se escribe de la siguiente forma: 
 `$$Z_t = l_{t-1}+e_t$$`
@@ -292,16 +343,16 @@ Finalmente, la representación del modelo Espacio de Estados se escribe de la si
 Asumiendo alguna distribución de `\(e_t\)`, se puede realizar inferencias a los parámetros y los pronósticos con intervalo de confianza.
 
 ---
-## Representación como modelos Espacio de Estados
+
 
 Ejemplo con Holt-Winter Multiplicativo.
 
-&lt;img src="presentacion_files/figure-html/unnamed-chunk-9-1.png" width="350px" height="350px" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-11-1.png" width="350px" height="350px" style="display: block; margin: auto;" /&gt;
 
 ---
-## Representación como modelos Espacio de Estados
 
-&lt;img src="presentacion_files/figure-html/unnamed-chunk-10-1.png" width="400px" height="400px" style="display: block; margin: auto;" /&gt;
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-12-1.png" width="400px" height="400px" style="display: block; margin: auto;" /&gt;
 
 
 
