@@ -33,6 +33,7 @@ library(astsa)
 library(car)
 library(gamair)
 library(mgcv)
+library(dplyr)
 ```
 
 # Modelo de Regresión
@@ -187,6 +188,8 @@ accuracy(pronostico,y.test)
 
 ```
 
+# Algunos temas adicionales
+
 ## Modelos aditivos generalizados
 
 ```{r}
@@ -216,3 +219,43 @@ mod<-lm(x~cos1+sin1,data=data)
 plot(cairo$temp~cairo$time,type="l", ylab="temp",xlab="time")
 points(cairo$time,fitted(mod),type="l",col=2,lwd=2)
 ```
+
+
+```{r}
+dim(x.spec$details)
+head(x.spec$details)
+tail(x.spec$details)
+spectro_orden <- x.spec$details %>% as.data.frame() %>% arrange(desc(spectrum))
+spectro_orden[1:8,]
+frecuencia1 <- spectro_orden$frequency[1] 
+frecuencia2 <- spectro_orden$frequency[2]
+frecuencia3 <- spectro_orden$frequency[3]
+frecuencia4 <- spectro_orden$frequency[4]
+frecuencia5 <- spectro_orden$frequency[5]
+
+```
+
+```{r}
+cos1<-cos(2*pi*frecuencia1*cairo$time)
+sin1<-sin(2*pi*frecuencia1*cairo$time)
+cos2<-cos(2*pi*frecuencia2*cairo$time)
+sin2<-sin(2*pi*frecuencia2*cairo$time)
+cos3<-cos(2*pi*frecuencia3*cairo$time)
+sin3<-sin(2*pi*frecuencia3*cairo$time)
+cos4<-cos(2*pi*frecuencia4*cairo$time)
+sin4<-sin(2*pi*frecuencia4*cairo$time)
+cos5<-cos(2*pi*frecuencia5*cairo$time)
+sin5<-sin(2*pi*frecuencia5*cairo$time)
+
+data=data.frame(x=x,
+                cos1=cos1,sen1=sin1,
+                cos2=cos2,sen2=sin2,
+                cos3=cos3,sen3=sin3,
+                cos4=cos4,sen4=sin4,
+                cos5=cos5,sen5=sin5)
+
+mod2<-lm(x~.,data=data)
+plot(cairo$temp~cairo$time,type="l", ylab="temp",xlab="time")
+points(cairo$time,fitted(mod2),type="l",col=2,lwd=2)            
+```
+

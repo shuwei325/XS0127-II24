@@ -567,6 +567,36 @@ La frecuencia dominante `\(\omega\)` es 0.002864583, es decir, se completa un ci
 &lt;img src="presentacion_files/figure-html/unnamed-chunk-23-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 ---
+# Ejemplo
+
+###Temperatura diaria (F) en Cairo de 01-01-1995 hasta 21-05-2005
+
+- Modelo de regresión lineal con covariables senos y cosenos con 5 frecuencias más importantes:
+
+`$$y_t=\alpha+ \sum_{k=1}^{5} \left[ \beta_{1k} cos(2 \pi \omega_k t)+\beta_{2k} sen(2 \pi \omega_k t) \right]+\varepsilon_t$$`
+- Las 8 frecuencias más importantes:
+
+```
+##   frequency   period  spectrum
+## 1    0.0029 349.0909 91251.731
+## 2    0.0026 384.0000 54420.640
+## 3    0.0023 426.6667  8986.496
+## 4    0.0031 320.0000  6148.723
+## 5    0.0034 295.3846  2902.172
+## 6    0.0021 480.0000  2409.255
+## 7    0.0018 548.5714  1666.177
+## 8    0.0039 256.0000  1331.423
+```
+
+---
+# Ejemplo
+
+###Temperatura diaria (F) en Cairo de 01-01-1995 hasta 21-05-2005
+
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-25-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+
+
+---
 
 ## Vamos al laboratorio
 

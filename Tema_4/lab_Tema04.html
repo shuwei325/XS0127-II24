@@ -96,8 +96,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#transformacion-logarítmica" id="toc-transformacion-logarítmica" class="nav-link" data-scroll-target="#transformacion-logarítmica"><span class="header-section-number">4.1</span> transformacion logarítmica</a></li>
   <li><a href="#pronóstico" id="toc-pronóstico" class="nav-link" data-scroll-target="#pronóstico"><span class="header-section-number">4.2</span> Pronóstico</a></li>
-  <li><a href="#modelos-aditivos-generalizados" id="toc-modelos-aditivos-generalizados" class="nav-link" data-scroll-target="#modelos-aditivos-generalizados"><span class="header-section-number">4.3</span> Modelos aditivos generalizados</a></li>
-  <li><a href="#análisis-espectral" id="toc-análisis-espectral" class="nav-link" data-scroll-target="#análisis-espectral"><span class="header-section-number">4.4</span> Análisis espectral</a></li>
+  </ul></li>
+  <li><a href="#algunos-temas-adicionales" id="toc-algunos-temas-adicionales" class="nav-link" data-scroll-target="#algunos-temas-adicionales"><span class="header-section-number">5</span> Algunos temas adicionales</a>
+  <ul class="collapse">
+  <li><a href="#modelos-aditivos-generalizados" id="toc-modelos-aditivos-generalizados" class="nav-link" data-scroll-target="#modelos-aditivos-generalizados"><span class="header-section-number">5.1</span> Modelos aditivos generalizados</a></li>
+  <li><a href="#análisis-espectral" id="toc-análisis-espectral" class="nav-link" data-scroll-target="#análisis-espectral"><span class="header-section-number">5.2</span> Análisis espectral</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -148,7 +151,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(astsa)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gamair)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="modelo-de-regresión" class="level1" data-number="2">
@@ -741,8 +745,11 @@ Test set     0.5177485 0.5156388</code></pre>
 </div>
 </div>
 </section>
-<section id="modelos-aditivos-generalizados" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="modelos-aditivos-generalizados"><span class="header-section-number">4.3</span> Modelos aditivos generalizados</h2>
+</section>
+<section id="algunos-temas-adicionales" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Algunos temas adicionales</h1>
+<section id="modelos-aditivos-generalizados" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="modelos-aditivos-generalizados"><span class="header-section-number">5.1</span> Modelos aditivos generalizados</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"cairo"</span>)</span>
 <span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>ctamm <span class="ot">&lt;-</span> <span class="fu">gamm</span>(temp<span class="sc">~</span><span class="fu">s</span>(day.of.year,<span class="at">bs=</span><span class="st">"cc"</span>,<span class="at">k=</span><span class="dv">20</span>)<span class="sc">+</span><span class="fu">s</span>(time,<span class="at">bs=</span><span class="st">"cr"</span>),</span>
@@ -760,8 +767,8 @@ Test set     0.5177485 0.5156388</code></pre>
 </div>
 </div>
 </section>
-<section id="análisis-espectral" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="análisis-espectral"><span class="header-section-number">4.4</span> Análisis espectral</h2>
+<section id="análisis-espectral" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="análisis-espectral"><span class="header-section-number">5.2</span> Análisis espectral</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">&lt;-</span>cairo<span class="sc">$</span>temp</span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>x.spec <span class="ot">&lt;-</span><span class="fu">mvspec</span>(x,<span class="at">log=</span><span class="st">"no"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -796,6 +803,80 @@ Test set     0.5177485 0.5156388</code></pre>
 <div>
 <figure class="figure">
 <p><img src="lab_Tema04_files/figure-html/unnamed-chunk-13-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(x.spec<span class="sc">$</span>details)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1920    3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(x.spec<span class="sc">$</span>details)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     frequency period  spectrum
+[1,]    0.0003   3840  727.9763
+[2,]    0.0005   1920  343.6813
+[3,]    0.0008   1280  232.7334
+[4,]    0.0010    960  930.7296
+[5,]    0.0013    768  199.1892
+[6,]    0.0016    640 1049.8714</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(x.spec<span class="sc">$</span>details)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        frequency period spectrum
+[1915,]    0.4987 2.0052  11.6033
+[1916,]    0.4990 2.0042   5.1899
+[1917,]    0.4992 2.0031   0.9052
+[1918,]    0.4995 2.0021   0.3214
+[1919,]    0.4997 2.0010   0.7780
+[1920,]    0.5000 2.0000   1.1591</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>spectro_orden <span class="ot">&lt;-</span> x.spec<span class="sc">$</span>details <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(spectrum))</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>spectro_orden[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  frequency   period  spectrum
+1    0.0029 349.0909 91251.731
+2    0.0026 384.0000 54420.640
+3    0.0023 426.6667  8986.496
+4    0.0031 320.0000  6148.723
+5    0.0034 295.3846  2902.172
+6    0.0021 480.0000  2409.255
+7    0.0018 548.5714  1666.177
+8    0.0039 256.0000  1331.423</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>frecuencia1 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">1</span>] </span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>frecuencia2 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">2</span>]</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>frecuencia3 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">3</span>]</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>frecuencia4 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">4</span>]</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>frecuencia5 <span class="ot">&lt;-</span> spectro_orden<span class="sc">$</span>frequency[<span class="dv">5</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>cos1<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia1<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>sin1<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia1<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>cos2<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia2<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>sin2<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia2<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>cos3<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia3<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>sin3<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia3<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>cos4<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia4<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>sin4<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia4<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>cos5<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia5<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>sin5<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia5<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>x,</span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a>                <span class="at">cos1=</span>cos1,<span class="at">sen1=</span>sin1,</span>
+<span id="cb74-14"><a href="#cb74-14" aria-hidden="true" tabindex="-1"></a>                <span class="at">cos2=</span>cos2,<span class="at">sen2=</span>sin2,</span>
+<span id="cb74-15"><a href="#cb74-15" aria-hidden="true" tabindex="-1"></a>                <span class="at">cos3=</span>cos3,<span class="at">sen3=</span>sin3,</span>
+<span id="cb74-16"><a href="#cb74-16" aria-hidden="true" tabindex="-1"></a>                <span class="at">cos4=</span>cos4,<span class="at">sen4=</span>sin4,</span>
+<span id="cb74-17"><a href="#cb74-17" aria-hidden="true" tabindex="-1"></a>                <span class="at">cos5=</span>cos5,<span class="at">sen5=</span>sin5)</span>
+<span id="cb74-18"><a href="#cb74-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-19"><a href="#cb74-19" aria-hidden="true" tabindex="-1"></a>mod2<span class="ot">&lt;-</span><span class="fu">lm</span>(x<span class="sc">~</span>.,<span class="at">data=</span>data)</span>
+<span id="cb74-20"><a href="#cb74-20" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span>
+<span id="cb74-21"><a href="#cb74-21" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(cairo<span class="sc">$</span>time,<span class="fu">fitted</span>(mod2),<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>)            </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab_Tema04_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
