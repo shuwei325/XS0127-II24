@@ -181,7 +181,7 @@ $$
 \hat{\beta}=(X^\top X)^{-1}X^\top Y.
 $$
 
-- El estimador de máxima verosimilitud es equivalente (¿?)
+- El estimador de máxima verosimilitud es equivalente.
 
 ---
 # Regresión lineal múltiple: Ejemplo
@@ -256,12 +256,14 @@ $$
 ---
 # Regresión espuria
 
-- Cuando las series no son estacionarias, los resultados de regresión no son confiables y presenta lo que se llama correlación espuria.
+- Cuando las series no son **estacionarias**, los resultados de regresión no son confiables y presenta lo que se llama correlación espuria.
+
+- **Nota:** Estacionariedad es un concepto que veremos en el siguiente tema y significa que la serie varíe con una tendencia constante y variación constante, pero con cierta estructura de autocorrelación.
 
 - Los datos de las series cronológicas de tendencias pueden parecer relacionados.
 - Por ejemplo, los pasajeros aéreos en Australia tienen una correlación positiva con la producción de arroz en Guinea.
 
-&lt;img src="presentacion_files/figure-html/spurious-1.png" width="350px" height="250px" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentacion_files/figure-html/spurious-1.png" width="500px" height="250px" style="display: block; margin: auto;" /&gt;
 
 ---
 # Regresión espuria
@@ -300,6 +302,7 @@ $$
 ## data:  Residuals from Linear regression model
 ## LM test = 28.813, df = 8, p-value = 0.000342
 ```
+
 
 ---
 # Modelos de tendencia
@@ -363,52 +366,45 @@ F-statistic: 210.6 on 2 and 25 DF,  p-value: 2.268e-16
 ---
 # Modelos de tendencia
 
+
+
 .pull-left[
-&lt;img src="presentacion_files/figure-html/unnamed-chunk-8-1.png" width="100%" /&gt;
-]
-
-.pull-right[
-&lt;img src="presentacion_files/figure-html/unnamed-chunk-9-1.png" width="100%" /&gt;
-]
-
----
-# Modelos de tendencia
 
 - Supuestos:
   - Normalidad
   - Homoscedasticidad
   - Autocorrelación en el tiempo
+  
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-8-1.png" width="80%" /&gt;
+]
 
-&lt;img src="presentacion_files/figure-html/unnamed-chunk-10-1.png" width="35%" style="display: block; margin: auto;" /&gt;
+.pull-right[
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-9-1.png" width="80%" /&gt;
 
+```
+## [1]  8 21
+```
+
+
+
+```
+## 
+## 	Shapiro-Wilk normality test
+## 
+## data:  mod$residuals
+## W = 0.97509, p-value = 0.7211
+```
+]
 
 ---
 # Modelos de tendencia
 
-**Prueba de Durbin-Watson:**
-Dado un modelo de regresión ajustado, suponga que el tipo de autocorrelación entre los errores tiene orden 1, i.e.
-`$$\epsilon_t= \rho \epsilon_{t-1}+a_t$$`
-donde `\(\rho\)` es la correlación de un rezago y `\(a_t \sim N(0,\sigma^2)\)`
+- Los residuales en el tiempo:
 
-Defina las hipótesis:&lt;br /&gt; 
-`\(H_0: \rho=0\)`  &lt;br /&gt; 
-`\(H_1: \rho \neq 0\)` &lt;br /&gt; 
-
-
-
-```r
-durbinWatsonTest(mod)
-```
-
-```
- lag Autocorrelation D-W Statistic p-value
-   1       0.1488158      1.576164   0.118
- Alternative hypothesis: rho != 0
-```
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-11-1.png" width="50%" /&gt;
 
 ---
 # Modelos de tendencia
-
 
 &lt;img src="presentacion_files/figure-html/unnamed-chunk-12-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
@@ -464,6 +460,20 @@ Con transformación `\((\ln Y_t)\)`
 
 
 ```
+         w tiempo tiempo2 mes
+1 10.76223      1       1   1
+2 10.72731      2       4   2
+3 10.78324      3       9   3
+4 10.50832      4      16   4
+5 10.36113      5      25   5
+6 10.51486      6      36   6
+```
+
+---
+# Modelos de series estacionales mediante variables indicadoras
+
+
+```
             Estimate Std. Error  t value Pr(&gt;|t|)
 (Intercept)  10.9420     0.0294 372.1819   0.0000
 tiempo        0.0086     0.0008  11.1807   0.0000
@@ -484,7 +494,7 @@ mes12        -0.1042     0.0325  -3.2068   0.0018
 ---
 # Modelos de series estacionales mediante variables indicadoras
 
-&lt;img src="presentacion_files/figure-html/unnamed-chunk-16-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-17-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -507,7 +517,7 @@ mes12        -0.1042     0.0325  -3.2068   0.0018
 ###Temperatura diaria (F) en Cairo de 01-01-1995 hasta 21-05-2005
 
 
-&lt;img src="presentacion_files/figure-html/unnamed-chunk-17-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-18-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -519,7 +529,7 @@ mes12        -0.1042     0.0325  -3.2068   0.0018
 - Ajuste de un GAM
 
 
-&lt;img src="presentacion_files/figure-html/unnamed-chunk-18-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-19-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 ---
 # Ejemplo
@@ -529,11 +539,11 @@ mes12        -0.1042     0.0325  -3.2068   0.0018
 - Periodograma (análisis espectral)
 
 .pull-left[
-&lt;img src="presentacion_files/figure-html/unnamed-chunk-19-1.png" width="65%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-20-1.png" width="65%" style="display: block; margin: auto;" /&gt;
 ]
 
 .pull-right[
-&lt;img src="presentacion_files/figure-html/unnamed-chunk-20-1.png" width="65%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-21-1.png" width="65%" style="display: block; margin: auto;" /&gt;
 
 ```
 ## [1] 349.0909
@@ -554,7 +564,7 @@ La frecuencia dominante `\(\omega\)` es 0.002864583, es decir, se completa un ci
 - Modelo de regresión lineal con covariables senos y cosenos
 `$$y_t=\alpha+\beta_1 cos(2 \pi \omega t)+\beta_2 sen(2 \pi \omega t)+\varepsilon_t$$`
 
-&lt;img src="presentacion_files/figure-html/unnamed-chunk-22-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentacion_files/figure-html/unnamed-chunk-23-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
 ---
 

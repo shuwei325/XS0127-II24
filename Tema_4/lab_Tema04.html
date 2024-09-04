@@ -97,6 +97,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#transformacion-logarítmica" id="toc-transformacion-logarítmica" class="nav-link" data-scroll-target="#transformacion-logarítmica"><span class="header-section-number">4.1</span> transformacion logarítmica</a></li>
   <li><a href="#pronóstico" id="toc-pronóstico" class="nav-link" data-scroll-target="#pronóstico"><span class="header-section-number">4.2</span> Pronóstico</a></li>
   <li><a href="#modelos-aditivos-generalizados" id="toc-modelos-aditivos-generalizados" class="nav-link" data-scroll-target="#modelos-aditivos-generalizados"><span class="header-section-number">4.3</span> Modelos aditivos generalizados</a></li>
+  <li><a href="#análisis-espectral" id="toc-análisis-espectral" class="nav-link" data-scroll-target="#análisis-espectral"><span class="header-section-number">4.4</span> Análisis espectral</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -314,7 +315,7 @@ Residual standard error: 71.61 on 25 degrees of freedom
 Multiple R-squared:  0.944, Adjusted R-squared:  0.9395 
 F-statistic: 210.6 on 2 and 25 DF,  p-value: 2.268e-16</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mod.ts1<span class="ot">&lt;-</span><span class="fu">tslm</span>(y<span class="sc">~</span>trend<span class="sc">+</span>trend<span class="sc">^</span><span class="dv">2</span>) <span class="co">#note la salida no incluye al tendencia al cuadrado.</span></span>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mod.ts1<span class="ot">&lt;-</span><span class="fu">tslm</span>(y<span class="sc">~</span>trend<span class="sc">+</span>trend<span class="sc">^</span><span class="dv">2</span>) <span class="co">#note la salida no incluye a la tendencia al cuadrado.</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.ts1)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -408,7 +409,7 @@ BP = 1.0404, df = 2, p-value = 0.5944</code></pre>
 <section id="autocorrelación" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="autocorrelación"><span class="header-section-number">3.5</span> Autocorrelación</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lag1.plot</span>(e)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(mod1<span class="sc">$</span>residuals)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -416,25 +417,11 @@ BP = 1.0404, df = 2, p-value = 0.5944</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(mod1<span class="sc">$</span>residuals)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">checkresiduals</span>(mod1)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
 <p><img src="lab_Tema04_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">durbinWatsonTest</span>(mod1) <span class="co">#solamente considera un rezago</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> lag Autocorrelation D-W Statistic p-value
-   1       0.1488158      1.576164   0.148
- Alternative hypothesis: rho != 0</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">checkresiduals</span>(mod1)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lab_Tema04_files/figure-html/unnamed-chunk-7-3.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -451,14 +438,14 @@ LM test = 3.9215, df = 6, p-value = 0.6873</code></pre>
 <section id="regresión-con-series-estacionales" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Regresión con series estacionales</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>turistas<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"turistas.csv"</span>,<span class="at">sep=</span><span class="st">";"</span>)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">&lt;-</span><span class="fu">ts</span>(turistas<span class="sc">$</span>turistas,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">frequency=</span><span class="dv">12</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>turistas<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"turistas.csv"</span>,<span class="at">sep=</span><span class="st">";"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">&lt;-</span><span class="fu">ts</span>(turistas<span class="sc">$</span>turistas,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">frequency=</span><span class="dv">12</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="transformacion-logarítmica" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="transformacion-logarítmica"><span class="header-section-number">4.1</span> transformacion logarítmica</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>w<span class="ot">&lt;-</span><span class="fu">log</span>(y)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(y) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>w<span class="ot">&lt;-</span><span class="fu">log</span>(y)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(y) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -466,7 +453,7 @@ LM test = 3.9215, df = 6, p-value = 0.6873</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(w)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(w)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -474,14 +461,14 @@ LM test = 3.9215, df = 6, p-value = 0.6873</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>tiempo<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="fu">length</span>(y))</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>tiempo2<span class="ot">&lt;-</span>tiempo<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>mes<span class="ot">&lt;-</span><span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">12</span>),<span class="dv">10</span>)</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>mes<span class="ot">&lt;-</span><span class="fu">as.factor</span>(mes)</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>datos1<span class="ot">&lt;-</span><span class="fu">data.frame</span>(w,tiempo,tiempo2,mes)</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>mod1<span class="ot">&lt;-</span><span class="fu">lm</span>(w<span class="sc">~</span>tiempo<span class="sc">+</span>tiempo2<span class="sc">+</span>mes,datos1)</span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>tiempo<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="fu">length</span>(y))</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>tiempo2<span class="ot">&lt;-</span>tiempo<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>mes<span class="ot">&lt;-</span><span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">12</span>),<span class="dv">10</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>mes<span class="ot">&lt;-</span><span class="fu">as.factor</span>(mes)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>datos1<span class="ot">&lt;-</span><span class="fu">data.frame</span>(w,tiempo,tiempo2,mes)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>mod1<span class="ot">&lt;-</span><span class="fu">lm</span>(w<span class="sc">~</span>tiempo<span class="sc">+</span>tiempo2<span class="sc">+</span>mes,datos1)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -514,17 +501,17 @@ Residual standard error: 0.07251 on 106 degrees of freedom
 Multiple R-squared:  0.9439,    Adjusted R-squared:  0.937 
 F-statistic: 137.3 on 13 and 106 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(datos1<span class="sc">$</span>mes)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(datos1<span class="sc">$</span>mes)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11" "12"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>datos2 <span class="ot">&lt;-</span> <span class="fu">within</span>(datos1, mes <span class="ot">&lt;-</span> <span class="fu">relevel</span>(mes, <span class="at">ref =</span> <span class="dv">12</span>))</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(datos2<span class="sc">$</span>mes)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>datos2 <span class="ot">&lt;-</span> <span class="fu">within</span>(datos1, mes <span class="ot">&lt;-</span> <span class="fu">relevel</span>(mes, <span class="at">ref =</span> <span class="dv">12</span>))</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(datos2<span class="sc">$</span>mes)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "12" "1"  "2"  "3"  "4"  "5"  "6"  "7"  "8"  "9"  "10" "11"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(w<span class="sc">~</span>tiempo<span class="sc">+</span>tiempo2<span class="sc">+</span>mes,datos2)</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod2)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(w<span class="sc">~</span>tiempo<span class="sc">+</span>tiempo2<span class="sc">+</span>mes,datos2)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod2)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -562,8 +549,8 @@ F-statistic: 137.3 on 13 and 106 DF,  p-value: &lt; 2.2e-16</code></pre>
 <section id="pronóstico" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="pronóstico"><span class="header-section-number">4.2</span> Pronóstico</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>mod1<span class="ot">&lt;-</span><span class="fu">lm</span>(w<span class="sc">~</span>tiempo<span class="sc">+</span>tiempo2<span class="sc">+</span>mes,datos1)</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>mod1<span class="ot">&lt;-</span><span class="fu">lm</span>(w<span class="sc">~</span>tiempo<span class="sc">+</span>tiempo2<span class="sc">+</span>mes,datos1)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -596,15 +583,15 @@ Residual standard error: 0.07251 on 106 degrees of freedom
 Multiple R-squared:  0.9439,    Adjusted R-squared:  0.937 
 F-statistic: 137.3 on 13 and 106 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">try</span>(</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>pronostico<span class="ot">&lt;-</span><span class="fu">forecast</span>(mod1) <span class="co">#error</span></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">try</span>(</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>pronostico<span class="ot">&lt;-</span><span class="fu">forecast</span>(mod1) <span class="co">#error</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Error in forecast.lm(mod1) : 
   argument "newdata" is missing, with no default</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>mod3<span class="ot">&lt;-</span><span class="fu">tslm</span>(w<span class="sc">~</span>trend<span class="sc">+</span><span class="fu">I</span>(trend<span class="sc">^</span><span class="dv">2</span>)<span class="sc">+</span>season)</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod3)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>mod3<span class="ot">&lt;-</span><span class="fu">tslm</span>(w<span class="sc">~</span>trend<span class="sc">+</span><span class="fu">I</span>(trend<span class="sc">^</span><span class="dv">2</span>)<span class="sc">+</span>season)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod3)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -637,8 +624,8 @@ Residual standard error: 0.07251 on 106 degrees of freedom
 Multiple R-squared:  0.9439,    Adjusted R-squared:  0.937 
 F-statistic: 137.3 on 13 and 106 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>pronostico<span class="ot">&lt;-</span><span class="fu">forecast</span>(mod3,<span class="at">h=</span><span class="dv">12</span>)</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>pronostico</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>pronostico<span class="ot">&lt;-</span><span class="fu">forecast</span>(mod3,<span class="at">h=</span><span class="dv">12</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>pronostico</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         Point Forecast    Lo 80    Hi 80    Lo 95    Hi 95
 Jan 2001       11.69308 11.59176 11.79439 11.53732 11.84883
@@ -654,10 +641,10 @@ Oct 2001       11.19632 11.09278 11.29985 11.03714 11.35549
 Nov 2001       11.40279 11.29895 11.50663 11.24315 11.56243
 Dec 2001       11.62822 11.52407 11.73236 11.46811 11.78833</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(w) <span class="sc">+</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"ln Y"</span>) <span class="sc">+</span></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(mod3<span class="sc">$</span>fitted.values, <span class="at">series =</span> <span class="st">"ajustado"</span>) <span class="sc">+</span></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(pronostico, <span class="at">series =</span> <span class="st">"pronostico"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(w) <span class="sc">+</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"ln Y"</span>) <span class="sc">+</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(mod3<span class="sc">$</span>fitted.values, <span class="at">series =</span> <span class="st">"ajustado"</span>) <span class="sc">+</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autolayer</span>(pronostico, <span class="at">series =</span> <span class="st">"pronostico"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -665,7 +652,7 @@ Dec 2001       11.62822 11.52407 11.73236 11.46811 11.78833</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">checkresiduals</span>(mod3)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">checkresiduals</span>(mod3)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -682,11 +669,11 @@ LM test = 69.582, df = 24, p-value = 2.529e-06</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>y<span class="ot">&lt;-</span><span class="fu">ts</span>(turistas<span class="sc">$</span>turistas,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">frequency=</span><span class="dv">12</span>)</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>y.train<span class="ot">&lt;-</span><span class="fu">window</span>(y,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">1999</span>,<span class="dv">12</span>))</span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>y.test<span class="ot">&lt;-</span><span class="fu">window</span>(y,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">2000</span>,<span class="dv">1</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">2000</span>,<span class="dv">12</span>))</span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>mod4<span class="ot">&lt;-</span><span class="fu">tslm</span>(y.train<span class="sc">~</span>trend<span class="sc">+</span><span class="fu">I</span>(trend<span class="sc">^</span><span class="dv">2</span>)<span class="sc">+</span>season)</span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod4)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>y<span class="ot">&lt;-</span><span class="fu">ts</span>(turistas<span class="sc">$</span>turistas,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">frequency=</span><span class="dv">12</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>y.train<span class="ot">&lt;-</span><span class="fu">window</span>(y,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">1991</span>,<span class="dv">1</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">1999</span>,<span class="dv">12</span>))</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>y.test<span class="ot">&lt;-</span><span class="fu">window</span>(y,<span class="at">start=</span><span class="fu">c</span>(<span class="dv">2000</span>,<span class="dv">1</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">2000</span>,<span class="dv">12</span>))</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>mod4<span class="ot">&lt;-</span><span class="fu">tslm</span>(y.train<span class="sc">~</span>trend<span class="sc">+</span><span class="fu">I</span>(trend<span class="sc">^</span><span class="dv">2</span>)<span class="sc">+</span>season)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod4)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -719,8 +706,8 @@ Residual standard error: 5414 on 94 degrees of freedom
 Multiple R-squared:  0.9158,    Adjusted R-squared:  0.9041 
 F-statistic:  78.6 on 13 and 94 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>pronostico<span class="ot">&lt;-</span><span class="fu">forecast</span>(mod4,<span class="at">h=</span><span class="dv">12</span>)</span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>pronostico</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>pronostico<span class="ot">&lt;-</span><span class="fu">forecast</span>(mod4,<span class="at">h=</span><span class="dv">12</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>pronostico</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         Point Forecast    Lo 80     Hi 80    Lo 95     Hi 95
 Jan 2000      105476.42 97842.25 113110.58 93731.85 117220.99
@@ -736,14 +723,14 @@ Oct 2000       72856.77 65012.19  80701.35 60788.49  84925.05
 Nov 2000       83927.02 76053.94  91800.11 71814.89  96039.16
 Dec 2000      100091.16 92188.58 107993.74 87933.65 112248.67</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">accuracy</span>(pronostico)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">accuracy</span>(pronostico)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                       ME     RMSE      MAE        MPE     MAPE      MASE
 Training set 5.729326e-13 5050.477 4024.289 -0.3434747 6.726303 0.6524221
                  ACF1
 Training set 0.623945</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">accuracy</span>(pronostico,y.test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">accuracy</span>(pronostico,y.test)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                       ME     RMSE      MAE        MPE     MAPE      MASE
 Training set 5.729326e-13 5050.477 4024.289 -0.3434747 6.726303 0.6524221
@@ -757,13 +744,13 @@ Test set     0.5177485 0.5156388</code></pre>
 <section id="modelos-aditivos-generalizados" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="modelos-aditivos-generalizados"><span class="header-section-number">4.3</span> Modelos aditivos generalizados</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"cairo"</span>)</span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>ctamm <span class="ot">&lt;-</span> <span class="fu">gamm</span>(temp<span class="sc">~</span><span class="fu">s</span>(day.of.year,<span class="at">bs=</span><span class="st">"cc"</span>,<span class="at">k=</span><span class="dv">20</span>)<span class="sc">+</span><span class="fu">s</span>(time,<span class="at">bs=</span><span class="st">"cr"</span>),</span>
-<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">data=</span>cairo,<span class="at">correlation=</span><span class="fu">corAR1</span>(<span class="at">form=</span><span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>year))</span>
-<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>pred<span class="ot">&lt;-</span><span class="fu">fitted</span>(ctamm<span class="sc">$</span>gam)</span>
-<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span>
-<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(cairo<span class="sc">$</span>time,pred,<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"cairo"</span>)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>ctamm <span class="ot">&lt;-</span> <span class="fu">gamm</span>(temp<span class="sc">~</span><span class="fu">s</span>(day.of.year,<span class="at">bs=</span><span class="st">"cc"</span>,<span class="at">k=</span><span class="dv">20</span>)<span class="sc">+</span><span class="fu">s</span>(time,<span class="at">bs=</span><span class="st">"cr"</span>),</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">data=</span>cairo,<span class="at">correlation=</span><span class="fu">corAR1</span>(<span class="at">form=</span><span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>year))</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>pred<span class="ot">&lt;-</span><span class="fu">fitted</span>(ctamm<span class="sc">$</span>gam)</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(cairo<span class="sc">$</span>time,pred,<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -771,47 +758,44 @@ Test set     0.5177485 0.5156388</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp,<span class="at">xlab=</span><span class="st">'Day'</span>,<span class="at">ylab=</span><span class="st">'Brightness'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="análisis-espectral" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="análisis-espectral"><span class="header-section-number">4.4</span> Análisis espectral</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">&lt;-</span>cairo<span class="sc">$</span>temp</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>x.spec <span class="ot">&lt;-</span><span class="fu">mvspec</span>(x,<span class="at">log=</span><span class="st">"no"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab_Tema04_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab_Tema04_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">&lt;-</span>cairo<span class="sc">$</span>temp</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>x.spec <span class="ot">&lt;-</span><span class="fu">mvspec</span>(x,<span class="at">log=</span><span class="st">"no"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x.spec)</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>frecuencia<span class="ot">&lt;-</span>x.spec<span class="sc">$</span>freq[x.spec<span class="sc">$</span>spec<span class="sc">==</span><span class="fu">max</span>(x.spec<span class="sc">$</span>spec)]</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span>frecuencia,<span class="at">col=</span><span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab_Tema04_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab_Tema04_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x.spec)</span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>frecuencia<span class="ot">&lt;-</span>x.spec<span class="sc">$</span>freq[x.spec<span class="sc">$</span>spec<span class="sc">==</span><span class="fu">max</span>(x.spec<span class="sc">$</span>spec)]</span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span>frecuencia,<span class="at">col=</span><span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lab_Tema04_files/figure-html/unnamed-chunk-12-4.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">/</span>frecuencia</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">/</span>frecuencia</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 349.0909</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>cos1<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>sin1<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>x,<span class="at">time=</span>cairo<span class="sc">$</span>time,<span class="at">cos=</span>cos1,<span class="at">sen=</span>sin1)</span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>mod<span class="ot">&lt;-</span><span class="fu">lm</span>(x<span class="sc">~</span>cos1<span class="sc">+</span>sin1,<span class="at">data=</span>data)</span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span>
-<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(cairo<span class="sc">$</span>time,<span class="fu">fitted</span>(mod),<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>cos1<span class="ot">&lt;-</span><span class="fu">cos</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>sin1<span class="ot">&lt;-</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>frecuencia<span class="sc">*</span>cairo<span class="sc">$</span>time)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>x,<span class="at">time=</span>cairo<span class="sc">$</span>time,<span class="at">cos=</span>cos1,<span class="at">sen=</span>sin1)</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>mod<span class="ot">&lt;-</span><span class="fu">lm</span>(x<span class="sc">~</span>cos1<span class="sc">+</span>sin1,<span class="at">data=</span>data)</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cairo<span class="sc">$</span>temp<span class="sc">~</span>cairo<span class="sc">$</span>time,<span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"temp"</span>,<span class="at">xlab=</span><span class="st">"time"</span>)</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(cairo<span class="sc">$</span>time,<span class="fu">fitted</span>(mod),<span class="at">type=</span><span class="st">"l"</span>,<span class="at">col=</span><span class="dv">2</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab_Tema04_files/figure-html/unnamed-chunk-12-5.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab_Tema04_files/figure-html/unnamed-chunk-13-3.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

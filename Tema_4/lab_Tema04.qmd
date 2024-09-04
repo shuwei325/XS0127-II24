@@ -91,7 +91,7 @@ datos.itcrgrad<-data.frame(y,tiempo,tiempo2)
 mod1<-lm(y~tiempo+tiempo2,datos.itcrgrad)
 summary(mod1)
 
-mod.ts1<-tslm(y~trend+trend^2) #note la salida no incluye al tendencia al cuadrado.
+mod.ts1<-tslm(y~trend+trend^2) #note la salida no incluye a la tendencia al cuadrado.
 summary(mod.ts1)
 mod.ts2<-tslm(y~trend+I(trend^2))
 summary(mod.ts2)
@@ -117,9 +117,7 @@ lmtest::bptest(mod1)
 ## Autocorrelación
 
 ```{r}
-lag1.plot(e)
 acf(mod1$residuals)
-durbinWatsonTest(mod1) #solamente considera un rezago
 checkresiduals(mod1)
 ```
 
@@ -199,11 +197,11 @@ ctamm <- gamm(temp~s(day.of.year,bs="cc",k=20)+s(time,bs="cr"),
 pred<-fitted(ctamm$gam)
 plot(cairo$temp~cairo$time,type="l", ylab="temp",xlab="time")
 points(cairo$time,pred,type="l",col=2,lwd=2)
+```
 
+## Análisis espectral
 
-plot(cairo$temp,xlab='Day',ylab='Brightness')
-
-
+```{r}
 x<-cairo$temp
 x.spec <-mvspec(x,log="no")
 plot(x.spec)
