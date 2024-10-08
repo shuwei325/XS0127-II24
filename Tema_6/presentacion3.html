@@ -125,9 +125,14 @@ se tiene que
 ---
 # Estimación por máxima verosimilitud
 
+`$$L(C,\phi_1,\sigma_a^2)=(2 \pi)^{-n/2}(\sigma_a)^{-n} \exp \left\lbrace -\sum\limits_{t=1}^T \frac{(Z_t-C-\phi_1 Z_{t-1})^2}{2 \sigma_a^2} \right\rbrace.$$`
+
 - Luego, la función log-verosimilitud es definida como
-`$$l(C,\phi_1,\sigma_a^2|Z_1,...,Z_T)\propto -n \log(\sigma_a)  -\left\lbrace \sum\limits_{t=1}^T \frac{(Z_t-C-\phi_1 Z_{t-1})^2}{2 \sigma_a^2} \right\rbrace.$$`
-- La idea es maximizar `\(l(C,\phi_1,\sigma_a^2|Z_1,...,Z_T)\)`.
+`$$l(C,\phi_1,\sigma_a^2)=
+-(\frac{n}{2}) \log(2 \pi)-n \log(\sigma_a) \left\lbrace -\sum\limits_{t=1}^T \frac{(Z_t-C-\phi_1 Z_{t-1})^2}{2 \sigma_a^2} \right\rbrace$$`
+
+`$$\Rightarrow l(C,\phi_1,\sigma_a^2)\propto -n \log(\sigma_a)  -\left\lbrace \sum\limits_{t=1}^T \frac{(Z_t-C-\phi_1 Z_{t-1})^2}{2 \sigma_a^2} \right\rbrace.$$`
+- La idea es maximizar `\(l(C,\phi_1,\sigma_a^2)\)`.
 
 
 ---
@@ -195,39 +200,37 @@ Bajo `\(H_0\)`, `\(Q\)` se distribuye aproximadamente como `\(\chi_{K-m}^2\)` do
 - Para `\(Q\)` grande, significa que las primeras `\(K\)` autocorrelaciones residuales son significativamente diferentes que cero. Si este es el caso, se debe volver a la etapa de identificación de un nuevo modelo.
 
 
+&lt;!-- --- --&gt;
+&lt;!-- ## Otras formas para identificación de modelos --&gt;
+
+&lt;!-- **Función penalizadora:** --&gt;
+
+&lt;!-- La idea es escoger los órdenes de `\(p\)` y `\(q\)` que minimiza la medida --&gt;
+&lt;!-- `$$P(p,q)=\ln \hat{\sigma}_{p,q}^2+(p+q) \frac{C(T)}{T}$$` --&gt;
+&lt;!-- donde &lt;br /&gt;  --&gt;
+&lt;!-- `\(\hat{\sigma}_{p,q}^2\)` es la estimación de la variancia residual,  &lt;br /&gt;  --&gt;
+&lt;!-- `\((p+q) \frac{C(T)}{T}\)` es el término penalizador, que aumenta si la cantidad de parámetros aumenta, y `\(C(T)\)` es una función que depende del tamaño de serie. --&gt;
+
+
 ---
-## Otras formas para identificación de modelos
+# Criterio de información
 
-**Función penalizadora:**
+- **Criterio de información de Akaike** `\((AIC)\)`:
 
-La idea es escoger los órdenes de `\(p\)` y `\(q\)` que minimiza la medida
-`$$P(p,q)=\ln \hat{\sigma}_{p,q}^2+(p+q) \frac{C(T)}{T}$$`
+`$$AIC= -2 \ln L + 2 k$$`
 donde &lt;br /&gt; 
-`\(\hat{\sigma}_{p,q}^2\)` es la estimación de la variancia residual,  &lt;br /&gt; 
-`\((p+q) \frac{C(T)}{T}\)` es el término penalizador, que aumenta si la cantidad de parámetros aumenta, y `\(C(T)\)` es una función que depende del tamaño de serie.
+`\(L\)` es la función de verosimilitud, &lt;br /&gt; 
+`\(k=p+q+c+1\)`
+`\(c=1\)` si `\(C \neq 0\)` y `\(c=0\)` si `\(C = 0\)` 
 
-
----
-## Otras formas para identificación de modelos
-
-- Criterio de información de Akaike `\((AIC)\)`:
-
-`$$AIC= -2 \ln L + 2 (p+q+k+1)$$`
-donde &lt;br /&gt; 
-`\(L\)` es la verosimilitud, &lt;br /&gt; 
-`\(k=1\)` si `\(C \neq 0\)` y `\(k=0\)` si `\(C = 0\)` 
-
-Note que `\((p+q+k+1)\)` es la cantidad de parámetros estimados.
+Note que `\((p+q+c+1)\)` es la cantidad de parámetros estimados.
 
 - `\(AIC_c\)`:
 
-`$$AIC_c= AIC + \frac{2(p+q+k+1)(p+q+k+2)}{T-p-q-k-2}$$`
+`$$AIC_c= AIC + \frac{2(p+q+c+1)(p+q+c+2)}{T-p-q-c-2}$$`
 
----
-## Otras formas para identificación de modelos
-
-- Criterio de información Bayesiana `\((BIC)\)`:
-`$$BIC= AIC + (\log T - 2) (p+q+k+1)$$`
+- **Criterio de información Bayesiana** `\((BIC)\)`:
+`$$BIC= AIC + (\log T - 2) (p+q+c+1)$$`
 
 ---
 # El contraste de raíz unitaria
