@@ -1,0 +1,291 @@
+---
+title: "Tema VIII: Modelos lineales multivariados de series temporales."
+subtitle: "Curso: Series Cronológicas"
+author: 
+  name: "Shu Wei Chou Chen"
+  affiliation: "Escuela de Estadística, UCR"
+format: 
+  html:
+    theme: 
+      light: [sketchy, code_font_light.scss]
+      dark: [sketchy, code_font_dark.scss]
+lang: es
+editor: visual
+toc: true
+toc-depth: 3
+toc-location: left
+toc-title: "Contenido"
+toc-expand: 1
+number-sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 4, fig.height = 4)
+```
+
+# librerías
+
+```{r , message=FALSE , warning=FALSE}
+library(ggplot2)
+library(forecast)
+library(fpp2)
+library(astsa)
+library(car)
+library(TSA)
+library(tseries)
+library(vars)
+library(MTS)
+```
+
+# Ejemplo (descriptivo) 
+
+```{r}
+par(mfrow = c(2,1))
+tsplot(soi, ylab="", main="Southern Oscillation Index")
+tsplot(rec, ylab="", main="Recruitment") 
+```
+
+
+
+```{r}
+par(mfrow=c(2,1))
+acf1(soi, 48, main="Southern Oscillation Index")
+acf1(rec, 48, main="Recruitment")
+```
+
+
+```{r}
+lag2.plot (soi, rec, 10) #importante ver la dirección que está calculando
+lag2.plot (soi, rec, 5)
+```
+
+
+```{r}
+par(mfrow=c(2,1))
+ccf2(rec,soi, 48, main="función de correlación cruzada de Rec. contra SOI")
+ccf2(soi,rec, 48, main="función de correlación cruzada de SOI contra Rec.")
+
+(r1=ccf(rec,soi, 10, plot=FALSE))
+(r2=ccf(soi,rec, 10, plot=FALSE))
+```
+
+# Ejemplo de VAR(2) simulado 
+
+Especificar las matrices de parámetros: 
+```{r}
+Phi_1 <- matrix(c(0.5, 0.1,
+                  0.2, 0.4), nrow = 2, byrow = TRUE)
+
+Phi_2 <- matrix(c(0.2, -0.1,
+                  0.1, 0.3), nrow = 2, byrow = TRUE)
+```
+
+Especificar la matriz de covariancias de los errores: 
+```{r}
+Sigma <- matrix(c(0.1, 0.02,
+                  0.02, 0.1), nrow = 2)
+```
+
+
+```{r}
+simVAR2 <- VARMAsim(nobs = 500, arlags = c(1, 2), phi = cbind(Phi_1, Phi_2), sigma = Sigma)
+```
+
+```{r}
+names(simVAR2)
+simVAR2_realizaciones <- ts(simVAR2$series, names = c("Y1", "Y2"))
+simVAR2_errores <- ts(simVAR2$noises, names = c("Y1", "Y2"))
+```
+
+
+```{r}
+plot(simVAR2_errores, main = "Los errores", col = 1:2)
+stats::acf(simVAR2_errores)
+```
+
+```{r}
+plot(simVAR2_realizaciones, main = "VAR(2)", col = 1:2)
+stats::acf(simVAR2_realizaciones)
+```
+
+
+
+## Determinar el lag de acuerdo a los criterios
+
+```{r}
+infoCI <- VARselect(simVAR2_realizaciones, lag.max = 3,
+                      type = "const")
+infoCI
+```
+
+## Estimar el modelo
+
+### Con el paquete `MTS`
+```{r}
+MTSVAR2 <- MTS::VAR(simVAR2_realizaciones, p = 2)
+```
+
+### Con el paquete `vars`
+```{r}
+varsVAR2 <- vars::VAR(simVAR2_realizaciones, p = 2, type = "const",
+                 season = NULL, exogen = NULL)
+
+summary(varsVAR2)
+
+```
+
+
+### Verificar que los autovalores (eigenvalues) tengan módulo menor a 1 (estacionariedad)
+
+
+```{r}
+roots <- vars::roots(varsVAR2)
+roots
+```
+# Ejemplos reales
+
+## Ejemplo: contaminación, temperatura y mortalidad 
+
+Ejemplo 5.10 de Shumway & Stoffer
+```{r}
+par(mfrow=c(3,1))
+tsplot(cmort, main="Cardiovascular Mortality", ylab="")
+tsplot(tempr, main="Temperature",  ylab="")
+tsplot(part, main="Particulates", ylab="")
+```
+
+
+```{r}
+pairs(cbind(Mortality=cmort, Temperature=tempr, Particulates=part))
+```
+
+
+
+```{r}
+acf2(cmort, 200, main="")
+acf2(tempr, 100, main="")
+acf2(part, 100, main="")
+```
+
+
+```{r}
+par(mfrow=c(3,1))
+ccf2(cmort,tempr, 50, main="cmort vs tempr")
+ccf2(cmort,part, 50, main="cmort vs part")
+ccf2(tempr,part, 50, main="tempr vs part")
+```
+
+```{r}
+data = data.frame(cmort, tempr, part)
+plot.ts(data , main = "", xlab = "")
+```
+
+```{r}
+stats::acf(data,lag.max = 100)
+```
+
+
+```{r}
+#VAR(1)
+modvar1= vars::VAR(data, p=1, type="both")
+summary(modvar1)
+
+acf(residuals(modvar1)[,1])
+acf(residuals(modvar1)[,2])
+acf(residuals(modvar1)[,3])
+```
+
+### VAR(2)
+
+```{r}
+modvar2 = vars::VAR(data, p=2, type="both")
+summary(modvar2)
+
+acf(residuals(modvar2)[,1],lag.max=100)
+acf(residuals(modvar2)[,2])
+acf(residuals(modvar2)[,3])
+
+stats::acf(residuals(modvar2))
+
+VARselect(data, lag.max=10, type="both")
+```
+
+AIC (p=9)
+HQ=Hannan-Quinn (p=5)
+SC=BIC o criterio de información de Schwarz (p=2)  
+FPE=Final Predictor Error (p=9)
+
+```{r}
+mod.f1 <- vars::VAR(data, p=2, type="both")
+mod.f2 <- vars::VAR(data, p=5, type="both")
+mod.f3 <- vars::VAR(data, p=9, type="both")
+summary(mod.f1)
+summary(mod.f2)
+summary(mod.f3)
+stats::acf(resid(mod.f1), 52)
+stats::acf(resid(mod.f2), 52)
+stats::acf(resid(mod.f3), 52)
+```
+
+Versión multivariada del contraste de Ljung-Box
+
+```{r}
+serial.test(mod.f1, lags.pt=12, type="PT.adjusted")
+serial.test(mod.f2, lags.pt=12, type="PT.adjusted")
+serial.test(mod.f3, lags.pt=12, type="PT.adjusted")
+```
+
+### Predicción
+```{r}
+(mod.pronostico = predict(mod.f1, n.ahead = 24, ci = 0.95))  # 4 semanas
+fanchart(mod.pronostico)
+```
+
+
+## Crecimiento de Producto Interno Bruto de UK, Canada y US.
+
+Ejemplo 4.7 Tsay
+
+
+```{r}
+data=read.table("q-gdp-ukcaus.txt",header=T)
+names(data)
+pib=log(data[,3:5])
+plot.ts(pib , main = "", xlab = "")
+```
+
+
+```{r}
+z=diffM(pib)
+z=z*100
+stats::acf(z,lag.max = 100)
+```
+
+```{r}
+VARselect(z, lag.max=10, type="both")
+modvar <- vars::VAR(z, p=2, type="both")
+summary(modvar)
+```
+
+### Dianósticos
+
+```{r}
+stats::acf(resid(modvar), 52)
+serial.test(modvar, lags.pt=12, type="PT.adjusted")
+```
+
+
+```{r}
+shapiro.test(residuals(modvar)[,1])
+shapiro.test(residuals(modvar)[,2])
+shapiro.test(residuals(modvar)[,3])
+mvnormtest::mshapiro.test(t(residuals(modvar)))
+```
+
+### Pronósticos
+```{r}
+(mod.pronostico = predict(modvar, n.ahead = 5, ci = 0.95))  
+fanchart(mod.pronostico)
+
+```
+
