@@ -22,7 +22,7 @@ estudiante](https://shuwei325.github.io/XS0127-II24/XS0127%20Series%20temporales
 |  | [Tema 6_3](./Tema_6/presentacion3.html) | [Lab Tema 6_1](./Tema_6/lab_Tema06_1.html) |
 |  | [Tema 6_4](./Tema_6/presentacion4.html) | [Lab Tema 6_2](./Tema_6/lab_Tema06_2.html) |
 | 7\. Regresión dinámica | [Tema 7](./Tema_7/presentacion.html) | [Lab Tema 7](./Tema_7/lab_Tema07.html) <br> [archivos](./Tema_7/Tema_7.zip) |
-| 8\. Multivariado | [Tema 8](./Tema_8/presentacion.html) | [Lab Tema 8](./Tema_8/lab_Tema08b.html) <br> [archivos](./Tema_8/archivos.zip) |
+| 8\. Multivariado | [Tema 8](./Tema_8/presentacion.html) | [Lab Tema 8](./Tema_8/lab_Tema08b.html) <br> [archivos](./Tema_8/Tema_8.zip) |
 
 ## Ejercicios
 
